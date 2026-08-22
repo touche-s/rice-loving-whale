@@ -118,7 +118,7 @@ function getDefaultAppearance() {
       thinking: 'thinking.gif',
       coding: 'coding.gif',
       success: 'success.gif',
-      error: 'maid-whale-error.jpg'
+      error: 'error.gif'
     },
     variants: {
       eyesClosed: 'maid-whale-idle-closed.jpg',

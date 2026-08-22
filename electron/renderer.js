@@ -34,7 +34,7 @@ function skinVariant(name) {
 // 默认皮肤回退：平铺文件（保持旧兼容）
 const FALLBACK_FILES = {
   idle: 'idle.gif', thinking: 'thinking.gif', coding: 'coding.gif',
-  success: 'success.gif', error: 'maid-whale-error.jpg'
+  success: 'success.gif', error: 'error.gif'
 };
 const FALLBACK_VARIANTS = {
   eyesClosed: 'maid-whale-idle-closed.jpg',
