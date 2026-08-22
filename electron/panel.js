@@ -78,7 +78,7 @@ const PET_IMG = {
 function renderPet() {
   document.getElementById('pet-state').textContent = STATE_LABEL[currentPetState] || currentPetState;
   const img = document.querySelector('#pet-avatar img');
-  if (img) img.src = '../assets/' + (PET_IMG[currentPetState] || 'maid-whale-idle.jpg');
+  if (img) img.src = './assets/' + (PET_IMG[currentPetState] || 'maid-whale-idle.jpg');
 }
 
 // 宠物名字：显示 + 改名
@@ -159,7 +159,7 @@ function renderSkins(skins) {
       : `skins/${skin.id}/${skin.files.idle || skin.files.thinking || ''}`;
     const card = document.createElement('div');
     card.className = 'skin-card' + (skin.id === currentSkin ? ' active' : '');
-    card.innerHTML = `<img src="../assets/${idleFile}" alt="${skin.name}" onerror="this.style.visibility='hidden'"><div class="name">${skin.name}</div>`;
+    card.innerHTML = `<img src="./assets/${idleFile}" alt="${skin.name}" onerror="this.style.visibility='hidden'"><div class="name">${skin.name}</div>`;
     card.addEventListener('click', async () => {
       await window.panelAPI.setAppearance({ skin: skin.id });
       currentSkin = skin.id;
@@ -238,7 +238,7 @@ function appendMsg(role, text) {
     avatar.textContent = '🙂';
   } else {
     const im = document.createElement('img');
-    im.src = '../assets/maid-whale-idle.jpg';
+    im.src = './assets/maid-whale-idle.jpg';
     im.alt = '鲸鱼娘';
     avatar.appendChild(im);
   }
