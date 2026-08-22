@@ -40,12 +40,14 @@ dsh plugin add dsh-maid-whale-pet --profile web
 install-plugin.bat   # 或手动复制 dsh-plugin → ~/.dsh/profiles/web 并 pnpm add
 ```
 
-### 方式一：直接下载（推荐）
+### 方式一：直接下载（推荐，开箱即用）
 
-从 [Releases](https://github.com/your-username/deepseek-maid-whale-desktop-pet/releases) 下载：
+从 [Releases](https://github.com/touche-s/rice-loving-whale/releases) 下载 exe，**无需安装 Node / 依赖**：
 
 - `鲸鱼娘桌宠 Setup x.x.x.exe` — 安装版（自动创建桌面快捷方式，可设置开机自启）
 - `鲸鱼娘桌宠 x.x.x.exe` — 便携版（解压即用，单文件）
+
+> Release 由 GitHub Actions 自动构建。首次运行自动初始化配置，配好 DeepSeek API Key（面板 → 设置）即可聊天、查余额。
 
 ### 方式二：源码运行
 
