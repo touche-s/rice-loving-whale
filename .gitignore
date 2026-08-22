@@ -61,4 +61,6 @@ Thumbs.db
 /colors_and_type.css
 # 生成图标的本地工具（含本机绝对路径，不提交）
 /electron/make-icons.js
+# 设计工具的自动生成文件
+*.design
 
