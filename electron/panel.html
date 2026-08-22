@@ -71,6 +71,23 @@
     html[data-theme="dark"] .skin-card, html[data-theme="dark"] .theme-card,
     html[data-theme="dark"] .preset-card, html[data-theme="dark"] .state-config { background: #1a2333; }
 
+    /* ── 亮色主题：导航栏改为天蓝色 ── */
+    html[data-theme="light"] .sidebar {
+      background: linear-gradient(180deg, #38bdf8, #0ea5e9 60%, #0284c7);
+      color: #fff;
+      box-shadow: 4px 0 20px rgba(14, 165, 233, .25);
+    }
+    html[data-theme="light"] .sidebar::before {
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,.25) 0%, transparent 30%),
+        radial-gradient(circle at 90% 80%, rgba(255,255,255,.18) 0%, transparent 36%);
+    }
+    html[data-theme="light"] .nav-item { color: rgba(255,255,255,.85); }
+    html[data-theme="light"] .nav-item:hover { color: #fff; background: rgba(255,255,255,.18); }
+    html[data-theme="light"] .nav-item.active { color: #0369a1; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+    html[data-theme="light"] .nav-item.active::before { background: #0369a1; box-shadow: 0 0 8px rgba(3,105,161,.6); }
+    html[data-theme="light"] .nav-item .badge { background: #0369a1; color: #fff; }
+
     body {
       font-family: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
       background: var(--cream);
