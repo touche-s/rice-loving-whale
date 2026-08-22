@@ -27,6 +27,7 @@
 - **托盘菜单**：显示/隐藏、手动切状态、打开面板、开机自启、退出
 - **DSH 地址可配置**：支持非本机/非默认端口的 DSH 部署
 - **断线重连**：指数退避自动重连，坏帧跳过不崩溃
+- **跟随 DSH 启动/退出**：安装 `dsh-pet-launcher` 插件后，启动 `dsh web` 自动拉起桌宠，退出 DSH 自动关闭桌宠
 - **零运行时依赖**：状态桥只用 Node 内置能力（fetch/WebSocket/TextDecoder），手写 RFC 6455 客户端
 
 ## 📦 安装
@@ -41,6 +42,17 @@ dsh plugin add dsh-maid-whale-pet --profile web
 # 本地开发测试：
 install-plugin.bat   # 或手动复制 dsh-plugin → ~/.dsh/profiles/web 并 pnpm add
 ```
+
+**让桌宠跟随 DSH 启动/退出**（`dsh-pet-launcher/` 插件）：安装后启动 `dsh web` 自动拉起桌面桌宠，退出 DSH 自动关闭桌宠。
+
+```bash
+# 1. 安装插件到 DSH web profile（需先重启桌宠为 exe 或配置路径）
+node dsh-pet-launcher/install-launcher.js <桌宠exe路径>
+# 2. 在 web profile 跑 pnpm install（或用 corepack pnpm install）
+# 3. 重启 dsh web
+```
+
+桌宠路径通过环境变量 `DSH_PET_PATH` 或 `~/.dsh/profiles/web/.pet-launcher-path` 指定（指向桌宠 exe 或 electron 源码目录）。
 
 ### 方式一：直接下载（推荐，开箱即用）
 
