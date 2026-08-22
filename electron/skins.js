@@ -17,13 +17,13 @@ const path = require('path');
 const STATE_FILES = ['idle', 'thinking', 'coding', 'success', 'error'];
 const EXT_ORDER = ['gif', 'jpg', 'jpeg', 'png', 'webp'];
 
-/** 默认皮肤（assets 平铺）的已知文件映射：idle/thinking 用动图，其余用立绘 */
+/** 默认皮肤（assets 平铺）的已知文件映射：全部用动图 */
 const DEFAULT_FILES = {
   idle: 'idle.gif',
   thinking: 'thinking.gif',
-  coding: 'maid-whale-coding.jpg',
-  success: 'maid-whale-success.jpg',
-  error: 'maid-whale-error.jpg'
+  coding: 'coding.gif',
+  success: 'success.gif',
+  error: 'error.gif'
 };
 const DEFAULT_VARIANTS = {
   eyesClosed: 'maid-whale-idle-closed.jpg',

@@ -69,16 +69,16 @@ async function init() {
 
 // ── 宠物视图 ──
 const PET_IMG = {
-  idle: 'maid-whale-idle.jpg',
-  thinking: 'maid-whale-thinking.jpg',
-  coding: 'maid-whale-coding.jpg',
-  success: 'maid-whale-success.jpg',
-  error: 'maid-whale-error.jpg'
+  idle: 'idle.gif',
+  thinking: 'thinking.gif',
+  coding: 'coding.gif',
+  success: 'success.gif',
+  error: 'error.gif'
 };
 function renderPet() {
   document.getElementById('pet-state').textContent = STATE_LABEL[currentPetState] || currentPetState;
   const img = document.querySelector('#pet-avatar img');
-  if (img) img.src = './assets/' + (PET_IMG[currentPetState] || 'maid-whale-idle.jpg');
+  if (img) img.src = './assets/' + (PET_IMG[currentPetState] || 'idle.gif');
 }
 
 // 宠物名字：显示 + 改名
