@@ -226,7 +226,7 @@ function scheduleMicro() {
   inMicro = false;
   // 所有 GIF 状态（idle/thinking/coding/success）自带连续动作帧，
   // 不再用静态表情变体打断播放（否则 GIF 会和静态图来回闪）。
-  if (['idle', 'thinking', 'coding', 'success'].includes(currentState)) return;
+  if (['idle', 'thinking', 'coding', 'success', 'error'].includes(currentState)) return;
 
   const eyesClosed = skinVariant('eyesClosed');
   const mouthOpen = skinVariant('mouthOpen');
@@ -458,10 +458,10 @@ function applyAppearance(app) {
 
 // 主题：给 <html> 加 data-theme 属性，CSS 变量切换配色
 const THEME_COLORS = {
-  light: { bubbleBg: 'rgba(255,255,255,0.95)', bubbleText: '#1e293b', bubbleBorder: 'rgba(59,130,246,0.25)', badgeBg: 'rgba(15,23,42,0.55)' },
-  dark: { bubbleBg: 'rgba(30,41,59,0.95)', bubbleText: '#e2e8f0', bubbleBorder: 'rgba(96,165,250,0.35)', badgeBg: 'rgba(15,23,42,0.8)' },
-  blue: { bubbleBg: 'rgba(239,246,255,0.96)', bubbleText: '#1e3a8a', bubbleBorder: 'rgba(59,130,246,0.5)', badgeBg: 'rgba(30,64,175,0.7)' },
-  pink: { bubbleBg: 'rgba(255,241,242,0.96)', bubbleText: '#881337', bubbleBorder: 'rgba(244,114,182,0.5)', badgeBg: 'rgba(159,18,57,0.7)' }
+  light: { bubbleBg: 'rgba(238,246,255,0.98)', bubbleText: '#174f8c', bubbleBorder: 'rgba(77,145,220,0.52)', badgeBg: 'rgba(23,79,140,0.82)' },
+  dark: { bubbleBg: 'rgba(23,37,54,0.98)', bubbleText: '#dcecff', bubbleBorder: 'rgba(141,185,232,0.48)', badgeBg: 'rgba(18,59,104,0.88)' },
+  blue: { bubbleBg: 'rgba(239,246,255,0.98)', bubbleText: '#174f8c', bubbleBorder: 'rgba(77,145,220,0.55)', badgeBg: 'rgba(31,103,177,0.82)' },
+  pink: { bubbleBg: 'rgba(238,246,255,0.98)', bubbleText: '#174f8c', bubbleBorder: 'rgba(77,145,220,0.52)', badgeBg: 'rgba(23,79,140,0.82)' }
 };
 function applyTheme(theme) {
   const c = THEME_COLORS[theme] || THEME_COLORS.light;
