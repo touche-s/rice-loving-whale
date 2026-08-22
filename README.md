@@ -2,7 +2,7 @@
 
 一个实时感知 **DeepSeek Harness（DSH）** AI 状态的桌面宠物。当你让 AI 干活时，她会跟随 AI 的状态变化：思考 → 歪头呼吸，干活 → 打字，完成 → 弹跳，报错 → 发抖，还会把 AI 正在思考的文字实时显示在气泡里。
 
-![待机](./assets/maid-whale-idle.jpg) ![思考](./assets/maid-whale-thinking.jpg) ![写代码](./assets/maid-whale-coding.jpg) ![完成](./assets/maid-whale-success.jpg) ![报错](./assets/maid-whale-error.jpg)
+![待机](./electron/assets/idle.gif) ![思考](./electron/assets/thinking.gif) ![写代码](./electron/assets/coding.gif) ![完成](./electron/assets/success.gif) ![报错](./electron/assets/error.gif)
 
 > 角色设定：蓝色女仆装的 Q 版鲸鱼娘，会在云朵上打盹、歪头思考、噼里啪啦写代码、干饭、躲猫猫。
 
