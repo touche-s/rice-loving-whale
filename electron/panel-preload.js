@@ -16,6 +16,13 @@ contextBridge.exposeInMainWorld('panelAPI', {
   chat: (messages) => ipcRenderer.invoke('panel-chat', { messages }),
   getChatHistory: () => ipcRenderer.invoke('panel-chat-history-get'),
   saveChatHistory: (messages) => ipcRenderer.invoke('panel-chat-history-save', messages),
+  presetList: () => ipcRenderer.invoke('preset-list'),
+  presetAdd: (name) => ipcRenderer.invoke('preset-add', name),
+  presetRemove: (id) => ipcRenderer.invoke('preset-remove', id),
+  presetUpdate: (id, patch) => ipcRenderer.invoke('preset-update', { id, patch }),
+  presetActivate: (id) => ipcRenderer.invoke('preset-activate', id),
+  presetUploadImage: (presetId, srcPath, fileName) => ipcRenderer.invoke('preset-upload-image', { presetId, srcPath, fileName }),
+  pickImage: () => ipcRenderer.invoke('panel-pick-image'),
   onLog: (cb) => ipcRenderer.on('panel-log', (event, entry) => cb(entry)),
   onNurture: (cb) => ipcRenderer.on('panel-nurture', (event, snap) => cb(snap)),
   onUsage: (cb) => ipcRenderer.on('panel-usage', (event, snap) => cb(snap))

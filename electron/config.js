@@ -24,7 +24,8 @@ const DEFAULT_CONFIG = {
   skin: 'default',
   theme: 'light',
   deepseekApiKey: '',
-  petName: '鲸鱼娘'
+  petName: '鲸鱼娘',
+  activePreset: 'default'
 };
 
 // userData 目录由 main.js 注入（app ready 后可取）

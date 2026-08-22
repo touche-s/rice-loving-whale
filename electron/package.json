@@ -8,7 +8,7 @@
     "start": "electron .",
     "build": "electron-builder --win portable",
     "build-installer": "electron-builder --win nsis",
-    "check": "node --check main.js && node --check preload.js && node --check renderer.js && node --check ws-client.js && node --check dsh-status-bridge.js && node --check config.js && node --check credentials.js && node --check usage.js"
+    "check": "node --check main.js && node --check preload.js && node --check renderer.js && node --check ws-client.js && node --check dsh-status-bridge.js && node --check config.js && node --check credentials.js && node --check usage.js && node --check presets.js"
   },
   "build": {
     "appId": "com.maidwhale.pet",
@@ -30,6 +30,7 @@
       "config.js",
       "credentials.js",
       "usage.js",
+      "presets.js",
       "panel.html",
       "panel.js",
       "panel-preload.js",

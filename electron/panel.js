@@ -41,16 +41,17 @@ function switchView(view) {
 }
 
 async function init() {
-  const [state, skins] = await Promise.all([window.panelAPI.getState(), window.panelAPI.getSkins()]);
+  const [state, skins, cfg] = await Promise.all([window.panelAPI.getState(), window.panelAPI.getSkins(), window.panelAPI.getConfig()]);
   currentSkin = state.skin || 'default';
   currentTheme = state.theme || 'light';
   currentPetState = state.currentState || 'idle';
+  currentPreset = (cfg && cfg.activePreset) || 'default';
 
   // 导航事件
   document.querySelectorAll('.nav-item').forEach((n) => n.addEventListener('click', () => switchView(n.dataset.view)));
 
   // 渲染各视图
-  renderSkins(skins);
+  await renderPresets();
   renderThemes();
   renderConn(state);
   renderNurture(await window.panelAPI.getNurture());
@@ -224,25 +225,117 @@ function setStat(baseId, value) {
   if (num) num.textContent = Math.round(value);
 }
 
-// ── 皮肤渲染 ──
-function renderSkins(skins) {
-  const grid = document.getElementById('skin-grid');
+// ── 素材预设渲染 ──
+let currentPreset = 'default';
+const PRESET_STATES = [
+  { key: 'idle', label: '待机' },
+  { key: 'thinking', label: '思考' },
+  { key: 'coding', label: '干活' },
+  { key: 'success', label: '完成' },
+  { key: 'error', label: '报错' }
+];
+// 把预设里的图文件名转成可显示的 URL（内置./assets/，自定义 petfile://）
+function presetFileUrl(file) {
+  if (!file) return '';
+  if (file.indexOf('preset-files/') === 0) {
+    return 'petfile://' + file.slice('preset-files/'.length);
+  }
+  return './assets/' + file;
+}
+async function renderPresets() {
+  const list = await window.panelAPI.presetList();
+  const grid = document.getElementById('preset-grid');
   if (!grid) return;
   grid.innerHTML = '';
-  for (const skin of skins) {
-    const idleFile = skin.id === 'default'
-      ? (skin.files.idle || skin.files.thinking || '')
-      : `skins/${skin.id}/${skin.files.idle || skin.files.thinking || ''}`;
+  for (const p of list) {
     const card = document.createElement('div');
-    card.className = 'skin-card' + (skin.id === currentSkin ? ' active' : '');
-    card.innerHTML = `<img src="./assets/${idleFile}" alt="${skin.name}" onerror="this.style.visibility='hidden'"><div class="name">${skin.name}</div>`;
-    card.addEventListener('click', async () => {
-      await window.panelAPI.setAppearance({ skin: skin.id });
-      currentSkin = skin.id;
-      grid.querySelectorAll('.skin-card').forEach((c) => c.classList.remove('active'));
+    card.className = 'preset-card' + (p.id === currentPreset ? ' active' : '');
+    const preview = p.files.idle ? presetFileUrl(p.files.idle) : '';
+    card.innerHTML = `
+      <img class="preset-preview" src="${preview}" alt="${p.name}" onerror="this.style.visibility='hidden'">
+      <div class="preset-name">${p.name}</div>
+      <div class="preset-builtin">${p.builtin ? '内置默认' : '自定义'}</div>
+      ${p.builtin ? '' : '<button class="preset-del" data-id="' + p.id + '">删除</button>'}`;
+    card.addEventListener('click', async (e) => {
+      if (e.target.classList.contains('preset-del')) return;
+      await window.panelAPI.presetActivate(p.id);
+      currentPreset = p.id;
+      grid.querySelectorAll('.preset-card').forEach((c) => c.classList.remove('active'));
       card.classList.add('active');
+      renderPresetEditor(p);
+    });
+    const del = card.querySelector('.preset-del');
+    if (del) del.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      if (!confirm('删除预设「' + p.name + '」？')) return;
+      await window.panelAPI.presetRemove(p.id);
+      if (currentPreset === p.id) {
+        await window.panelAPI.presetActivate('default');
+        currentPreset = 'default';
+      }
+      renderPresets();
     });
     grid.appendChild(card);
+  }
+  // 渲染当前选中预设的编辑器
+  const active = list.find((p) => p.id === currentPreset) || list[0];
+  if (active) renderPresetEditor(active);
+
+  // 新建按钮
+  const addBtn = document.getElementById('btn-preset-add');
+  if (addBtn && !addBtn._bound) {
+    addBtn._bound = true;
+    addBtn.addEventListener('click', async () => {
+      const name = prompt('预设名称：', '我的预设');
+      if (!name) return;
+      const p = await window.panelAPI.presetAdd(name);
+      await window.panelAPI.presetActivate(p.id);
+      currentPreset = p.id;
+      renderPresets();
+    });
+  }
+}
+
+function renderPresetEditor(preset) {
+  const editor = document.getElementById('preset-editor');
+  const states = document.getElementById('preset-states');
+  if (!editor || !states) return;
+  if (!preset || preset.builtin) {
+    // 内置预设：提示用默认图，不提供换图
+    editor.style.display = 'none';
+    return;
+  }
+  editor.style.display = '';
+  document.getElementById('preset-editor-title').textContent = preset.name;
+  states.innerHTML = '';
+  for (const s of PRESET_STATES) {
+    const file = (preset.files && preset.files[s.key]) || '';
+    const cell = document.createElement('div');
+    cell.className = 'state-config';
+    cell.innerHTML = `
+      <img class="state-img" src="${presetFileUrl(file)}" onerror="this.style.visibility='hidden'">
+      <div class="state-label">${s.label}</div>
+      <div class="state-actions">
+        <button class="btn-mini" data-state="${s.key}">换图</button>
+        ${file ? '<button class="btn-mini reset" data-state="' + s.key + '">默认</button>' : ''}
+      </div>`;
+    cell.querySelector('[data-state="' + s.key + '"]').addEventListener('click', async () => {
+      const picked = await window.panelAPI.pickImage();
+      if (!picked) return;
+      const up = await window.panelAPI.presetUploadImage(preset.id, picked.path, picked.name);
+      if (!up || !up.ok) { alert('上传失败：' + ((up && up.error) || '未知')); return; }
+      const files = Object.assign({}, preset.files, { [s.key]: up.file });
+      await window.panelAPI.presetUpdate(preset.id, { files });
+      renderPresets();
+    });
+    const resetBtn = cell.querySelector('.btn-mini.reset');
+    if (resetBtn) resetBtn.addEventListener('click', async () => {
+      const files = Object.assign({}, preset.files);
+      delete files[s.key];
+      await window.panelAPI.presetUpdate(preset.id, { files });
+      renderPresets();
+    });
+    states.appendChild(cell);
   }
 }
 

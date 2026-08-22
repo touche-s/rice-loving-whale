@@ -614,6 +614,45 @@
     @media (prefers-reduced-motion: reduce) {
       * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
     }
+
+    /* ── 素材预设 ── */
+    .preset-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .preset-card {
+      border: 2px solid var(--border); border-radius: 12px; padding: 12px; cursor: pointer;
+      transition: all .18s; background: #fff; text-align: center;
+    }
+    .preset-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+    .preset-card.active { border-color: var(--blue-500); background: var(--blue-50); }
+    .preset-card .preset-preview {
+      width: 100%; height: 84px; border-radius: 8px; object-fit: cover; background: var(--slate-100); margin-bottom: 8px;
+    }
+    .preset-card .preset-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .preset-card .preset-builtin { font-size: 11px; color: var(--text-soft); }
+    .preset-card .preset-del {
+      margin-top: 8px; padding: 4px 10px; font-size: 11px; border: none; border-radius: 6px;
+      background: #fee2e2; color: #b91c1c; cursor: pointer;
+    }
+    .preset-card .preset-del:hover { background: #fecaca; }
+    .preset-card .preset-del:disabled { opacity: .4; cursor: not-allowed; }
+
+    .preset-states { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+    .state-config {
+      border: 1px solid var(--border); border-radius: 10px; padding: 10px; background: var(--slate-50);
+      text-align: center;
+    }
+    .state-config .state-img {
+      width: 100%; height: 88px; border-radius: 8px; object-fit: cover; background: #fff; margin-bottom: 8px;
+      border: 1px solid var(--border);
+    }
+    .state-config .state-label { font-size: 12px; color: var(--text-body); margin-bottom: 8px; }
+    .state-config .state-actions { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+    .state-config .btn-mini {
+      padding: 5px 10px; font-size: 11px; border: none; border-radius: 6px; cursor: pointer;
+      background: var(--blue-100); color: var(--blue-700);
+    }
+    .state-config .btn-mini:hover { background: var(--blue-200); }
+    .state-config .btn-mini.reset { background: var(--slate-100); color: var(--text-body); }
+    .btn-sm { font-size: 12px; }
   </style>
 </head>
 <body>
@@ -764,13 +803,25 @@
         </div>
       </section>
 
-      <!-- 皮肤 -->
+      <!-- 皮肤（素材预设） -->
       <section class="view" data-view="skin">
         <div class="card">
-          <div class="card-header"><div class="card-title"><div class="icon">⭐</div>皮肤装扮</div></div>
+          <div class="card-header">
+            <div class="card-title"><div class="icon">⭐</div>素材预设</div>
+            <button class="btn btn-primary btn-sm" id="btn-preset-add" style="padding:6px 14px">＋ 新建预设</button>
+          </div>
           <div class="card-body">
-            <div class="skin-grid" id="skin-grid"></div>
-            <div class="usage-note" style="margin-top:12px">放图即用：新建 assets/skins/&lt;名字&gt;/，放入 idle/thinking/coding/success/error 图</div>
+            <div class="preset-grid" id="preset-grid"></div>
+            <div class="usage-note" style="margin-top:12px">每个预设是一套各状态图方案，可保存多套。选中预设后可给每个状态单独换图。</div>
+          </div>
+        </div>
+        <div class="card" id="preset-editor" style="display:none">
+          <div class="card-header">
+            <div class="card-title"><div class="icon">🖼</div><span id="preset-editor-title">预设</span></div>
+          </div>
+          <div class="card-body">
+            <div class="preset-states" id="preset-states"></div>
+            <div class="usage-note" style="margin-top:10px">「默认」使用内置图，其余状态可点「换图」选择本地图片（GIF/JPG/PNG）。</div>
           </div>
         </div>
       </section>

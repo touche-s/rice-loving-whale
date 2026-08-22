@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, screen, Tray, Menu, nativeImage, dialog, Notification } = require('electron');
+const { app, BrowserWindow, ipcMain, screen, Tray, Menu, nativeImage, dialog, Notification, protocol } = require('electron');
 const path = require('path');
 
 // ── DSH 状态桥（主进程）─────────────────────────────────────
@@ -17,6 +17,7 @@ const usage = require('./usage.js');
 const config = require('./config.js');
 const credentials = require('./credentials.js');
 credentials.setSafeStorage(require('electron').safeStorage);
+const presets = require('./presets.js');
 
 // 状态 → 桌宠状态映射（所有源共用：thinking/working/completed/error/idle → 桌宠五态）
 const STATE_TO_PET = {
@@ -108,22 +109,15 @@ function handleNurtureAction(action) {
   }
   pushNurtureState();
 }
-// 固定外观：默认鲸鱼娘皮肤的文件映射（皮肤切换已停用）
+// 当前外观：从激活的预设读取各状态图文件映射
 function getDefaultAppearance() {
+  const preset = presets.get(appConfig.activePreset || 'default');
   return {
     skin: 'default',
     theme: appConfig.theme || 'light',
-    files: {
-      idle: 'idle.gif',
-      thinking: 'thinking.gif',
-      coding: 'coding.gif',
-      success: 'success.gif',
-      error: 'error.gif'
-    },
-    variants: {
-      eyesClosed: 'maid-whale-idle-closed.jpg',
-      mouthOpen: 'maid-whale-idle-openmouth.jpg'
-    }
+    preset: preset.id,
+    files: Object.assign({}, preset.files),
+    variants: Object.assign({}, preset.variants)
   };
 }
 function pushAppearance() {
@@ -486,6 +480,48 @@ ipcMain.handle('panel-nurture-action', (event, action) => {
 ipcMain.handle('panel-get-usage', () => usage.snapshot());
 ipcMain.handle('panel-refresh-balance', () => usage.fetchBalance());
 
+// ── 素材预设 IPC ──
+ipcMain.handle('preset-list', () => presets.list());
+ipcMain.handle('preset-add', (event, name) => presets.add(name));
+ipcMain.handle('preset-remove', (event, id) => presets.remove(id));
+ipcMain.handle('preset-update', (event, { id, patch }) => presets.update(id, patch || {}));
+ipcMain.handle('preset-activate', (event, id) => {
+  appConfig.activePreset = id;
+  config.save(appConfig);
+  pushAppearance();
+  return presets.get(id);
+});
+// 文件选择：挑选要设为某个状态图的图片
+ipcMain.handle('panel-pick-image', async (event) => {
+  try {
+    const r = await dialog.showOpenDialog({
+      title: '选择状态图',
+      filters: [
+        { name: '图片', extensions: ['gif', 'jpg', 'jpeg', 'png', 'webp'] }
+      ],
+      properties: ['openFile']
+    });
+    if (r.canceled || !r.filePaths || !r.filePaths[0]) return null;
+    const p = r.filePaths[0];
+    return { path: p, name: require('path').basename(p) };
+  } catch (e) {
+    return null;
+  }
+});
+// 上传自定义图到预设目录：返回可存入 files 的相对路径（preset-files/<id>/<file>）
+ipcMain.handle('preset-upload-image', async (event, { presetId, srcPath, fileName }) => {
+  try {
+    const dir = presets.presetFilesDir(presetId);
+    fs.mkdirSync(dir, { recursive: true });
+    const safe = (fileName || 'custom').replace(/[^\w.\-]+/g, '_');
+    const dest = path.join(dir, safe);
+    fs.copyFileSync(srcPath, dest);
+    return { ok: true, file: `preset-files/${presetId}/${safe}` };
+  } catch (e) {
+    return { ok: false, error: e.message };
+  }
+});
+
 // ── 聊天记录持久化（本地 chat-history.json）──
 const CHAT_HISTORY_FILE = 'chat-history.json';
 function chatHistoryPath() {
@@ -569,6 +605,19 @@ app.whenReady().then(() => {
   if (!fs.existsSync(path.join(app.getPath('userData'), 'config.json'))) {
     config.save(appConfig);
   }
+  // 素材预设初始化
+  presets.setSaveDir(app.getPath('userData'));
+  // 自定义图协议：petfile://<presetId>/<file> → userData/preset-files/<presetId>/<file>
+  protocol.registerFileProtocol('petfile', (request, callback) => {
+    try {
+      const url = new URL(request.url);
+      const rel = decodeURIComponent(url.pathname).replace(/^\/+/, '');
+      const file = path.join(app.getPath('userData'), 'preset-files', rel);
+      callback({ path: file });
+    } catch (e) {
+      callback({ path: '' });
+    }
+  });
   // 养成数据初始化
   nurture.setSaveDir(app.getPath('userData'));
   nurture.load();

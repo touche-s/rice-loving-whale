@@ -24,11 +24,24 @@ const STATES = {
 };
 
 function skinFile(state) {
-  return SKIN_FILES[state] ? `${ASSET_PREFIX}/${SKIN_FILES[state]}` : null;
+  const f = SKIN_FILES[state];
+  if (!f) return null;
+  // 自定义图（preset-files/...）走 petfile:// 协议；内置图走 ./assets/
+  if (f.indexOf('preset-files/') === 0) {
+    const rel = f.slice('preset-files/'.length);
+    return `petfile://${rel}`;
+  }
+  return `${ASSET_PREFIX}/${f}`;
 }
 
 function skinVariant(name) {
-  return SKIN_VARIANTS[name] ? `${ASSET_PREFIX}/${SKIN_VARIANTS[name]}` : null;
+  const f = SKIN_VARIANTS[name];
+  if (!f) return null;
+  if (f.indexOf('preset-files/') === 0) {
+    const rel = f.slice('preset-files/'.length);
+    return `petfile://${rel}`;
+  }
+  return `${ASSET_PREFIX}/${f}`;
 }
 
 // 默认皮肤回退：平铺文件（保持旧兼容）
