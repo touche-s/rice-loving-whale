@@ -565,6 +565,10 @@ ipcMain.handle('panel-chat', async (event, { messages }) => {
 app.whenReady().then(() => {
   config.setUserDataDir(app.getPath('userData'));
   appConfig = config.load();
+  // 首次运行：本地无 config.json 时主动写入一份默认配置，方便用户后续编辑
+  if (!fs.existsSync(path.join(app.getPath('userData'), 'config.json'))) {
+    config.save(appConfig);
+  }
   // 养成数据初始化
   nurture.setSaveDir(app.getPath('userData'));
   nurture.load();
