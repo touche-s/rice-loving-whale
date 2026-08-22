@@ -1,0 +1,32 @@
+{
+  "name": "dsh-maid-whale-pet",
+  "version": "0.1.0",
+  "description": "🐳 蓝色女仆鲸鱼娘桌宠 —— DeepSeek Harness 网页内桌宠插件：Agent 状态驱动 + 心声气泡 + 审批/提问提醒",
+  "keywords": ["dsh", "deepseek-harness", "desktop-pet", "桌宠", "whale", "maid"],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": {
+      "types": "./lib/client.d.ts",
+      "default": "./lib/client.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": ["connection"],
+      "platform": "web",
+      "immediately": true
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-client-runtime": "^0.1.1-rc.2",
+    "@deepseek-ai/cordis": "^4.0.1"
+  },
+  "files": ["lib"]
+}

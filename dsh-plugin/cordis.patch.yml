@@ -1,0 +1,7 @@
+# dsh-maid-whale-pet bundle patch：把鲸鱼娘桌宠挂进 profile entry 树
+# 通过 dsh.bundle.patch 声明，被 dsh plugin add 识别并追加到
+# dsh.profile.bundles，loader 应用本 patch 后插件成为 entry，
+# client-modules 扫描 dsh.client 声明并把 client bundle 注入浏览器。
+- insert:
+    - id: maid-whale-pet
+      name: 'dsh-maid-whale-pet'

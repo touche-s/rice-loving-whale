@@ -1,0 +1,16 @@
+{
+  "baseUrl": "http://127.0.0.1:3080",
+  "openAtLogin": false,
+  "stateSource": "dsh",
+  "hooksPort": 8765,
+  "skin": "default",
+  "theme": "blue",
+  "petName": "鲸鱼娘",
+  "_comment": [
+    "此文件为配置模板，不含任何敏感信息，可提交到仓库。",
+    "真实配置在 %APPDATA%\\maid-whale-desktop-pet\\config.json（运行时自动生成）。",
+    "deepseekApiKey：可选。填了才能查余额和聊天，会以 Windows 加密（DPAPI）存本机，明文不落盘。",
+    "可在面板 → 设置里填写 API Key，或用编辑器往 config.json 加 {\"deepseekApiKey\":\"sk-xxx\"}。",
+    "字段：baseUrl(DSH地址) / openAtLogin(开机自启) / stateSource(dsh|hooks) / hooksPort / skin / theme / petName"
+  ]
+}

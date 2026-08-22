@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鲸鱼娘桌宠</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="container">
+    <div id="speech-bubble" class="bubble hidden">
+      <div id="speech-text"></div>
+    </div>
+    <div id="pet-wrapper" class="wrapper">
+      <img id="pet-img" src="./assets/maid-whale-idle.jpg" alt="鲸鱼娘" draggable="false">
+      <!-- 举手提醒图标：审批/提问时从右侧弹出 -->
+      <div id="raise-hand" class="raise-hand hidden">✋</div>
+    </div>
+    <div id="status-badge" class="badge">
+      <span class="dot"></span>
+      <span id="status-label">待机中</span>
+    </div>
+    <div id="controls" class="controls">
+      <button data-state="idle" title="待机">Zzz</button>
+      <button data-state="thinking" title="思考">?</button>
+      <button data-state="coding" title="写代码">Code</button>
+      <button data-state="success" title="完成">OK</button>
+      <button data-state="error" title="报错">!</button>
+    </div>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>

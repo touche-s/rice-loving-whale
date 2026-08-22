@@ -1,0 +1,135 @@
+{
+  "data": [
+    {
+      "id": "image-001",
+      "title": "待机/睡觉",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1783000000000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "naturalSize": {
+          "width": 1920,
+          "height": 1920
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/maid-whale-idle.jpg"
+      }
+    },
+    {
+      "id": "image-002",
+      "title": "思考中",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1783000000001,
+      "canvasData": {
+        "x": 480,
+        "y": 0,
+        "naturalSize": {
+          "width": 1920,
+          "height": 1920
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/maid-whale-thinking.jpg"
+      }
+    },
+    {
+      "id": "image-003",
+      "title": "正在写代码",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1783000000002,
+      "canvasData": {
+        "x": 960,
+        "y": 0,
+        "naturalSize": {
+          "width": 1920,
+          "height": 1920
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/maid-whale-coding.jpg"
+      }
+    },
+    {
+      "id": "image-004",
+      "title": "完成任务",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1783000000003,
+      "canvasData": {
+        "x": 1440,
+        "y": 0,
+        "naturalSize": {
+          "width": 1920,
+          "height": 1920
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/maid-whale-success.jpg"
+      }
+    },
+    {
+      "id": "image-005",
+      "title": "遇到报错",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1783000000004,
+      "canvasData": {
+        "x": 1920,
+        "y": 0,
+        "naturalSize": {
+          "width": 1920,
+          "height": 1920
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/maid-whale-error.jpg"
+      }
+    },
+    {
+      "id": "image-006",
+      "title": "待机-闭眼",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1783000000005,
+      "canvasData": {
+        "x": 2400,
+        "y": 0,
+        "naturalSize": {
+          "width": 1920,
+          "height": 1920
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/maid-whale-idle-closed.jpg"
+      }
+    },
+    {
+      "id": "image-007",
+      "title": "待机-张嘴",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1783000000006,
+      "canvasData": {
+        "x": 2880,
+        "y": 0,
+        "naturalSize": {
+          "width": 1920,
+          "height": 1920
+        }
+      },
+      "devMetadata": {
+        "imageSrc": "assets/maid-whale-idle-openmouth.jpg"
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "freeSize",
+    "projectName": "蓝色女仆大肥鱼桌宠"
+  }
+}

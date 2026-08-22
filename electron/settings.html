@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鲸鱼娘设置</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      padding: 18px 20px;
+    }
+    h1 { font-size: 15px; margin-bottom: 14px; color: #0f172a; }
+    label { display: block; font-size: 12px; color: #475569; margin-bottom: 4px; }
+    input[type="text"], select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      margin-bottom: 6px;
+    }
+    input[type="text"]:focus, select:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,.15); }
+    .hint { font-size: 11px; color: #94a3b8; margin-bottom: 14px; }
+    .row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .row label { margin: 0; }
+    .actions { display: flex; gap: 8px; justify-content: flex-end; }
+    button {
+      padding: 7px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    #save { background: #3b82f6; color: #fff; }
+    #save:hover { background: #2563eb; }
+    #cancel { background: #e2e8f0; color: #334155; }
+    #cancel:hover { background: #cbd5e1; }
+    #status { font-size: 12px; color: #059669; text-align: right; height: 16px; }
+  </style>
+</head>
+<body>
+  <h1>🐳 鲸鱼娘设置</h1>
+  <label for="state-source">状态源</label>
+  <select id="state-source">
+    <option value="dsh">DeepSeek Harness（DSH 事件流）</option>
+    <option value="hooks">通用 Hooks 端口（任意 AI 工具推送）</option>
+  </select>
+  <div class="hint" id="source-hint">DSH：监听事件流实时驱动；Hooks：任意工具 curl 推送状态（127.0.0.1:8765）</div>
+  <label for="base-url">DSH 地址</label>
+  <input type="text" id="base-url" placeholder="http://127.0.0.1:3080">
+  <div class="hint">运行 DeepSeek Harness Web 的地址（本机默认 http://127.0.0.1:3080）</div>
+  <label for="deepseek-key">DeepSeek API Key</label>
+  <input type="password" id="deepseek-key" placeholder="sk-…（用于余额查询，可选）" autocomplete="off">
+  <div class="hint">可选 · 仅用安全存储加密存本机（Windows 凭据加密，明文不落盘），只调官方 /user/balance 查余额，不上传聊天数据。不填也能用，只是看不到总余额。</div>
+  <div class="row">
+    <input type="checkbox" id="auto-start">
+    <label for="auto-start">开机自启</label>
+  </div>
+  <div class="actions">
+    <button id="cancel">取消</button>
+    <button id="save">保存</button>
+  </div>
+  <div id="status"></div>
+  <script src="settings.js"></script>
+</body>
+</html>

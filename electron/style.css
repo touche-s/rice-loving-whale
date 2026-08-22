@@ -1,0 +1,310 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* 主题变量（renderer.js applyTheme 设置） */
+:root {
+  --bubble-bg: rgba(255, 255, 255, 0.95);
+  --bubble-text: #1e293b;
+  --bubble-border: rgba(59, 130, 246, 0.25);
+  --badge-bg: rgba(15, 23, 42, 0.55);
+}
+
+html, body {
+  background: transparent;
+  overflow: hidden;
+  font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+
+#container {
+  position: relative;
+  width: 200px;
+  height: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 状态气泡（心声气泡复用：宽扁样式，多行自动换行） */
+.bubble {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bubble-bg);
+  color: var(--bubble-text);
+  border-radius: 14px;
+  padding: 7px 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: normal;
+  word-break: break-word;
+  max-width: 192px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--bubble-border);
+  z-index: 10;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+
+/* 心声气泡：固定 148px 宽 = 每行 10 字，正好两行装下 20 字，无省略号无滚动 */
+.bubble.thought {
+  width: 148px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 审批/提问醒目提示条 */
+.bubble.alert {
+  background: rgba(255, 251, 235, 0.97);
+  border: 1.5px solid #f59e0b;
+  color: #78350f;
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.35);
+  max-width: 192px;
+  font-weight: 600;
+}
+.bubble.alert.approval { border-color: #ef4444; background: rgba(254, 242, 242, 0.97); color: #7f1d1d; box-shadow: 0 4px 18px rgba(239, 68, 68, 0.35); }
+.bubble.alert.question { border-color: #3b82f6; background: rgba(239, 246, 255, 0.97); color: #1e3a8a; box-shadow: 0 4px 18px rgba(59, 130, 246, 0.35); }
+
+/* 完成汇报：本轮消耗气泡（蓝色，两行：一行 token、一行钱） */
+.bubble.report {
+  background: rgba(239, 246, 255, 0.97);
+  border: 1.5px solid #3b82f6;
+  color: #1e3a8a;
+  box-shadow: 0 4px 18px rgba(59, 130, 246, 0.35);
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.7;
+  white-space: nowrap;
+  padding: 8px 12px;
+}
+
+/* 举手动画：鲸鱼娘轻快上下浮动 */
+.wrapper.alert-anim { animation: alert-up 0.5s ease-in-out 3; }
+@keyframes alert-up {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* 举手图标：从右侧弹出，模拟鲸鱼娘举手提醒 */
+.raise-hand {
+  position: absolute;
+  right: -8px;
+  top: 30px;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  line-height: 1;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  border: 2px solid #f59e0b;
+  z-index: 12;
+  pointer-events: none;
+  transform-origin: bottom left;
+}
+
+/* 举手弹出动画：从右侧伸出来 + 摆动 */
+.raise-hand.show {
+  animation: raise-out 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, raise-wave 0.8s ease-in-out 0.45s infinite;
+}
+.raise-hand.hidden { display: none; }
+@keyframes raise-out {
+  0% { transform: translateX(24px) scale(0.3) rotate(20deg); opacity: 0; }
+  100% { transform: translateX(0) scale(1) rotate(0deg); opacity: 1; }
+}
+@keyframes raise-wave {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(8deg); }
+}
+
+.bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(255, 255, 255, 0.95);
+}
+
+.bubble.hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(6px);
+}
+
+/* 宠物主体 */
+.wrapper {
+  width: 180px;
+  height: 180px;
+  margin-top: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: grab;
+  -webkit-app-region: no-drag;
+  animation: none; /* 动图状态自带动画，不再浮动 */
+}
+
+.wrapper:active {
+  cursor: grabbing;
+}
+
+#pet-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* 状态动画：所有动图状态（idle/thinking/coding/success）自带动作，
+   不再叠 CSS 摆动/跳动，避免与 GIF 叠加造成闪跳。error 仍是静态图保留抖动反馈。 */
+.wrapper { animation: none; }                 /* idle 待机：动图自带动画 */
+.wrapper.state-thinking { animation: none; }   /* thinking 思考：动图自带动画 */
+.wrapper.state-coding { animation: none; }     /* coding 干活：动图自带动画 */
+.wrapper.state-success { animation: none; }    /* success 完成：动图（吃米饭）自带动画 */
+.wrapper.state-error { animation: shake 0.5s ease-in-out infinite; }      /* 报错：静态图用抖动 */
+.wrapper.state-eat { animation: munch 0.45s ease-in-out infinite; }
+
+/* 摸头：轻微缩放 + 上浮 */
+.wrapper.pat-anim { animation: pat 0.8s ease-in-out; }
+@keyframes pat {
+  0% { transform: translateY(0) scale(1); }
+  30% { transform: translateY(-6px) scale(1.08); }
+  60% { transform: translateY(-2px) scale(0.98); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* 双击躲藏：缩小消失 */
+.wrapper.hide-anim { animation: hideaway 0.7s ease-in forwards; }
+@keyframes hideaway {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  60% { transform: translateY(10px) scale(0.6); opacity: 0.6; }
+  100% { transform: translateY(40px) scale(0.1); opacity: 0; }
+}
+
+/* 吃米饭：身体微微上下颠动模拟干饭节奏 */
+@keyframes munch {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(2deg); }
+}
+
+/* 呼吸 + 浮动：scaleY 模拟呼吸，translateY 模拟漂浮 */
+@keyframes breathe-float {
+  0%, 100% { transform: translateY(0) scaleY(1) scaleX(1); }
+  30% { transform: translateY(-4px) scaleY(1.015) scaleX(0.995); }
+  55% { transform: translateY(-7px) scaleY(0.99) scaleX(1.008); }
+  75% { transform: translateY(-3px) scaleY(1.01) scaleX(1); }
+}
+
+/* 思考歪头 + 呼吸 */
+@keyframes breathe-tilt {
+  0%, 100% { transform: rotate(-3deg) scaleY(1); }
+  30% { transform: rotate(4deg) scaleY(1.012); }
+  60% { transform: rotate(-1deg) scaleY(0.995); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes tilt {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(6deg); }
+}
+
+@keyframes type {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  25% { transform: translateY(-3px) rotate(-1.5deg); }
+  75% { transform: translateY(2px) rotate(1.5deg); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-14px) scale(1.05); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* 状态徽章 */
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  padding: 3px 10px;
+  background: var(--badge-bg);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 11px;
+  backdrop-filter: blur(4px);
+}
+
+.badge .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #34d399;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.badge .dot.state-thinking { background: #f59e0b; }
+.badge .dot.state-coding { background: #3b82f6; }
+.badge .dot.state-success { background: #34d399; }
+.badge .dot.state-error { background: #ef4444; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* 控制按钮 */
+.controls {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  padding: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  z-index: 20;
+}
+
+#container:hover .controls {
+  display: flex;
+}
+
+.controls button {
+  border: none;
+  background: #e2e8f0;
+  border-radius: 6px;
+  padding: 4px 7px;
+  font-size: 10px;
+  color: #334155;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.controls button:hover {
+  background: #3b82f6;
+  color: #fff;
+}

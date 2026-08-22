@@ -1,0 +1,98 @@
+{
+  "name": "deepseek-maid-whale-desktop-pet",
+  "displayName": "蓝色女仆鲸鱼娘桌宠",
+  "description": "根据 AI 思考、写代码、完成、报错等状态切换动作的可爱桌宠插件",
+  "version": "0.1.0",
+  "publisher": "maid-whale-pet",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "icon": "media/icon.png",
+  "categories": [
+    "Other",
+    "Visualization",
+    "Machine Learning"
+  ],
+  "keywords": [
+    "desktop pet",
+    "ai",
+    "deepseek",
+    "whale",
+    "maid",
+    "cursor",
+    "trae"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/deepseek-maid-whale-desktop-pet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/deepseek-maid-whale-desktop-pet/issues"
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "deepseekMaidWhale.openPanel",
+        "title": "打开鲸鱼娘桌宠",
+        "category": "鲸鱼娘"
+      },
+      {
+        "command": "deepseekMaidWhale.setState",
+        "title": "切换鲸鱼娘状态",
+        "category": "鲸鱼娘"
+      },
+      {
+        "command": "deepseekMaidWhale.toggleAutoCycle",
+        "title": "自动循环状态",
+        "category": "鲸鱼娘"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "deepseekMaidWhale",
+          "title": "鲸鱼娘",
+          "icon": "media/whale-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "deepseekMaidWhale": [
+        {
+          "type": "webview",
+          "id": "deepseekMaidWhale.petView",
+          "name": "蓝色女仆鲸鱼娘",
+          "when": "true"
+        }
+      ]
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "deepseekMaidWhale.openPanel"
+        },
+        {
+          "command": "deepseekMaidWhale.setState"
+        },
+        {
+          "command": "deepseekMaidWhale.toggleAutoCycle"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.3"
+  }
+}

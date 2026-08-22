@@ -1,0 +1,59 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+out/
+dist/
+*.vsix
+electron/dist/
+
+# IDE
+.vscode-test/
+.idea/
+*.swp
+*.swo
+*~
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# ── 本地运行时数据（含敏感信息，绝不提交）──
+# 这些通常生成在 %APPDATA%\maid-whale-desktop-pet\，但保险起见也忽略项目内副本
+**/config.json
+**/save.json
+**/usage.json
+**/chat-history.json
+**/dsh-bridge.log
+**/usage-debug.log
+*.cred
+
+# ── 素材源文件（只在 electron/assets 保留运行必需的小体积素材）──
+# 根 assets/ 是生成源文件/大 GIF，体积大，不纳入版本控制
+/assets/
+# electron 内的超大 GIF（可选：若需要可手动单独管理）
+# electron/assets/*.gif
+
+# ── 开发/调试脚本（非运行必需）──
+/.preflight/
+
+# ── 打包/工具产物 ──
+/rebuild-gifs.ps1
+/fix-trae.js
+/fix-trae.ps1
+/install-trae.bat
+/install-trae.ps1
+/install-plugin.bat
+/generation-summary.json
+/runtime-orchestration-summary.json
+/colors_and_type.css

@@ -1,0 +1,190 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 16px;
+  font-family: "Inter", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  background: transparent;
+  color: var(--vscode-foreground, #1e293b);
+  display: flex;
+  justify-content: center;
+}
+
+#app {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.wrapper {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+#pet-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--vscode-editor-background, #fff) 80%, transparent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  transition: opacity 0.12s ease;
+}
+
+.bubble {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  background: var(--vscode-editorHoverWidget-background, #ffffff);
+  color: var(--vscode-editorHoverWidget-foreground, #1e293b);
+  border: 1px solid var(--vscode-editorHoverWidget-border, #e2e8f0);
+  padding: 8px 14px;
+  border-radius: 16px;
+  font-size: 13px;
+  line-height: 1.4;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.bubble.hidden {
+  opacity: 0;
+}
+
+.bubble::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 10px;
+  height: 10px;
+  background: inherit;
+  border-right: 1px solid var(--vscode-editorHoverWidget-border, #e2e8f0);
+  border-bottom: 1px solid var(--vscode-editorHoverWidget-border, #e2e8f0);
+}
+
+.badge {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: color-mix(in srgb, var(--vscode-badge-background, #3b82f6) 12%, transparent);
+  color: var(--vscode-badge-foreground, #3b82f6);
+  border: 1px solid color-mix(in srgb, var(--vscode-badge-background, #3b82f6) 20%, transparent);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.dot.auto {
+  animation: pulse 1.4s infinite;
+}
+
+.controls {
+  margin-top: 16px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.controls button {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid var(--vscode-button-secondaryBackground, #e2e8f0);
+  background: var(--vscode-button-secondaryBackground, #f1f5f9);
+  color: var(--vscode-button-secondaryForeground, #334155);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.controls button:hover {
+  transform: translateY(-2px);
+  background: var(--vscode-button-background, #3b82f6);
+  color: var(--vscode-button-foreground, #ffffff);
+}
+
+.controls button:active {
+  transform: translateY(0);
+}
+
+.float { animation: float 3s ease-in-out infinite; }
+.tilt { animation: tilt 2s ease-in-out infinite; }
+.type { animation: type 0.4s ease-in-out infinite; }
+.bounce { animation: bounce 0.8s ease-in-out infinite; }
+.shake { animation: shake 0.5s ease-in-out infinite; }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes tilt {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+@keyframes type {
+  0%, 100% { transform: translateY(0) scale(1); }
+  25% { transform: translateY(2px) scale(0.99); }
+  75% { transform: translateY(-2px) scale(1.01); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-14px) scale(1.05); }
+  60% { transform: translateY(0) scale(0.95); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px) rotate(-1deg); }
+  40% { transform: translateX(4px) rotate(1deg); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+@media (max-width: 240px) {
+  .wrapper {
+    width: 140px;
+    height: 140px;
+  }
+
+  .controls button {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+}

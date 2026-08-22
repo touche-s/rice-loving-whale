@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🐳 鲸鱼娘面板</title>
+  <style>
+    :root {
+      --sidebar-bg: linear-gradient(180deg, #1e40af, #2563eb 60%, #3b82f6);
+      --sidebar-text: rgba(255,255,255,.6);
+      --sidebar-active: #fff;
+      --sidebar-active-bg: rgba(255,255,255,.16);
+      --content-bg: #f5f7fb;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-sub: #64748b;
+      --text-soft: #94a3b8;
+      --border: #e6ecf5;
+      --accent: #2563eb;
+      --accent-soft: #eff4ff;
+      --radius: 14px;
+      --shadow: 0 1px 2px rgba(16,24,40,.04), 0 6px 20px rgba(16,24,40,.05);
+      --shadow-hover: 0 2px 4px rgba(16,24,40,.06), 0 12px 28px rgba(16,24,40,.09);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      background: var(--content-bg);
+      color: var(--text);
+      font-size: 13px;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ── 左侧导航栏（线条 icon，蓝渐变）── */
+    .sidebar {
+      width: 84px;
+      background: var(--sidebar-bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 18px 0;
+      flex-shrink: 0;
+      user-select: none;
+      box-shadow: inset -1px 0 0 rgba(255,255,255,.08);
+    }
+    .sidebar .logo {
+      width: 48px; height: 48px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px; overflow: hidden;
+      border: 2px solid rgba(255,255,255,.35);
+      box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    }
+    .sidebar .logo img { width: 100%; height: 100%; object-fit: cover; }
+    .nav-item {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      margin-bottom: 6px;
+      color: var(--sidebar-text);
+      position: relative;
+      transition: background .18s, color .18s, transform .18s;
+    }
+    .nav-item svg { width: 22px; height: 22px; transition: transform .18s; }
+    .nav-item:hover { color: #fff; background: rgba(255,255,255,.10); transform: translateY(-1px); }
+    .nav-item.active {
+      color: var(--sidebar-active);
+      background: var(--sidebar-active-bg);
+      box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute; left: -14px; top: 50%; transform: translateY(-50%);
+      width: 3px; height: 22px; border-radius: 3px; background: #fff;
+      box-shadow: 0 0 8px rgba(255,255,255,.6);
+    }
+    .nav-item .tip {
+      position: absolute; left: 100%; top: 50%; transform: translate(6px,-50%);
+      background: #0f172a; color: #fff; font-size: 11px; padding: 3px 8px;
+      border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none;
+      transition: opacity .15s; z-index: 20;
+    }
+    .nav-item:hover .tip { opacity: 1; }
+
+    /* ── 右侧内容区 ── */
+    .content {
+      flex: 1; overflow-y: auto; padding: 26px 30px;
+      scrollbar-width: none;              /* Firefox 隐藏滚动条 */
+      -ms-overflow-style: none;           /* IE/Edge 隐藏滚动条 */
+    }
+    .content::-webkit-scrollbar { display: none; }  /* Chrome/Safari 隐藏滚动条 */
+    .content-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 22px;
+    }
+    .content-header h1 { font-size: 20px; color: #0f172a; font-weight: 700; letter-spacing: .2px; }
+    .content-header .sub { font-size: 12px; color: var(--text-sub); margin-top: 3px; }
+
+    .card {
+      background: var(--card-bg); border-radius: var(--radius);
+      padding: 20px; margin-bottom: 18px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      transition: box-shadow .2s;
+    }
+    .card:hover { box-shadow: var(--shadow-hover); }
+    .card-title {
+      font-size: 13px; font-weight: 600; color: #1e293b;
+      margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .card-title .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+    /* 宠物主视图 */
+    .pet-hero { display: flex; flex-direction: column; align-items: center; padding: 30px 16px; }
+    .pet-hero .pet-avatar {
+      width: 132px; height: 132px; border-radius: 50%;
+      background: linear-gradient(160deg, #dbeafe, #93c5fd);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; margin-bottom: 16px;
+      border: 3px solid #fff;
+      box-shadow: 0 10px 30px rgba(37,99,235,.28);
+      animation: float 3s ease-in-out infinite;
+    }
+    .pet-hero .pet-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+    .pet-hero .pet-name { font-size: 18px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px; }
+    .pet-hero .name-edit {
+      border: none; background: transparent; cursor: pointer; font-size: 13px; padding: 2px;
+      opacity: .45; transition: opacity .2s, transform .2s;
+    }
+    .pet-hero .name-edit:hover { opacity: 1; transform: scale(1.15); }
+    .pet-hero .name-input {
+      font-size: 16px; font-weight: 600; color: #0f172a; padding: 4px 8px;
+      border: 1.5px solid var(--accent); border-radius: 8px; outline: none; width: 160px;
+      background: #fff; text-align: center;
+    }
+    .pet-hero .pet-state { font-size: 12px; color: var(--text-sub); margin-top: 6px; }
+    .pet-hero .pet-actions { display: flex; gap: 12px; margin-top: 20px; }
+
+    /* 按钮 */
+    .btn {
+      padding: 10px 20px; border: none; border-radius: 10px; font-size: 13px; cursor: pointer;
+      font-weight: 600; transition: all .18s; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 12px rgba(37,99,235,.25); }
+    .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: 0 6px 16px rgba(37,99,235,.32); }
+    .btn-soft { background: var(--accent-soft); color: #1d4ed8; }
+    .btn-soft:hover { background: #e0ecff; }
+    .btn-orange { background: #fff7ed; color: #c2410c; }
+    .btn-orange:hover { background: #ffedd5; }
+
+    /* 数值条 */
+    .stat { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .stat:last-child { margin-bottom: 0; }
+    .stat .ic { width: 30px; text-align: center; font-size: 16px; }
+    .stat .label { width: 42px; color: var(--text-sub); flex-shrink: 0; }
+    .bar { flex: 1; height: 12px; background: #eef2f9; border-radius: 6px; overflow: hidden; }
+    .bar-fill { height: 100%; width: 0%; background: #f59e0b; border-radius: 6px; transition: width .4s; }
+    .bar-fill.pink { background: linear-gradient(90deg,#f472b6,#ec4899); }
+    .bar-fill.green { background: linear-gradient(90deg,#4ade80,#22c55e); }
+    .bar-fill.blue { background: linear-gradient(90deg,#60a5fa,#3b82f6); }
+    .stat .val { width: 34px; text-align: right; color: #334155; font-weight: 600; }
+
+    .stat-mini { font-size: 12px; color: var(--text-sub); margin-top: 10px; }
+
+    /* 阶段 */
+    .stage-banner {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 12px;
+      background: linear-gradient(120deg,#eff6ff,#dbeafe); margin-bottom: 16px;
+    }
+    .stage-banner .stage-emoji { font-size: 38px; }
+    .stage-banner .stage-name { font-size: 16px; font-weight: 700; color: #1d4ed8; }
+    .stage-banner .stage-desc { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+    /* 皮肤网格 */
+    .skin-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .skin-card {
+      border: 2px solid var(--border); border-radius: 12px; padding: 8px; cursor: pointer;
+      transition: all .18s; background: #fafcff; text-align: center;
+    }
+    .skin-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+    .skin-card.active { border-color: var(--accent); background: var(--accent-soft); }
+    .skin-card img { width: 100%; height: 96px; object-fit: cover; border-radius: 8px; background: #fff; }
+    .skin-card .name { font-size: 12px; margin-top: 8px; color: #475569; font-weight: 500; }
+    .skin-card.active .name { color: #1d4ed8; font-weight: 700; }
+
+    /* 主题 */
+    .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .theme-card {
+      border: 2px solid var(--border); border-radius: 12px; padding: 12px; cursor: pointer;
+      transition: all .18s; display: flex; align-items: center; gap: 12px; background: #fafcff;
+    }
+    .theme-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+    .theme-card.active { border-color: var(--accent); background: var(--accent-soft); }
+    .theme-card .swatch { width: 36px; height: 36px; border-radius: 9px; flex-shrink: 0; border: 1px solid #e2e8f0; }
+    .theme-card .tname { font-size: 13px; font-weight: 600; color: #334155; }
+
+    /* 日志 */
+    .log-box {
+      height: 320px; overflow-y: auto; background: #0f172a; color: #cbd5e1;
+      border-radius: 10px; padding: 12px; font-family: Consolas, monospace; font-size: 11px; line-height: 1.7;
+    }
+    .log-line { white-space: nowrap; }
+    .log-line .time { color: #60a5fa; margin-right: 6px; }
+    .log-line .lvl { color: #fbbf24; margin-right: 4px; }
+
+    /* 连接状态 */
+    .conn-pill {
+      display: inline-flex; align-items: center; gap: 6px; padding: 5px 14px;
+      border-radius: 999px; font-size: 12px; background: #fef2f2; color: #dc2626; font-weight: 600;
+    }
+    .conn-pill.on { background: #ecfdf5; color: #059669; }
+    .conn-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    /* 用量/余额 */
+    .usage-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .usage-cell {
+      background: linear-gradient(160deg,#f0f6ff,#e2edff); border-radius: 12px; padding: 16px;
+      border: 1px solid #dbeafe;
+    }
+    .usage-cell .u-label { font-size: 11px; color: #64748b; }
+    .usage-cell .u-value { font-size: 24px; font-weight: 700; color: #1d4ed8; margin-top: 5px; }
+    .usage-cell .u-value small { font-size: 12px; font-weight: 600; color: #64748b; }
+    .usage-note { font-size: 11px; color: var(--text-soft); margin-top: 8px; line-height: 1.6; }
+    .history-row {
+      display: flex; align-items: center; justify-content: space-between; padding: 10px 4px;
+      border-bottom: 1px solid var(--border); font-size: 12px;
+    }
+    .history-row:last-child { border-bottom: none; }
+    .history-row .h-time { color: #64748b; }
+    .history-row .h-cost { color: #1d4ed8; font-weight: 600; }
+    .history-row .h-tokens { color: var(--text-soft); }
+    .empty-tip { color: var(--text-soft); font-size: 12px; text-align: center; padding: 18px 0; }
+
+    /* ── 对话 ── */
+    .chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 120px); }
+    .chat-box {
+      flex: 1; overflow-y: auto; padding: 8px 4px;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .chat-box::-webkit-scrollbar { display: none; }
+    .msg { display: flex; margin-bottom: 14px; }
+    .msg .avatar {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
+      overflow: hidden; background: #fff;
+    }
+    .msg .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .msg.user { flex-direction: row-reverse; }
+    .msg.user .avatar { background: linear-gradient(160deg,#93c5fd,#3b82f6); margin-left: 10px; }
+    .msg.bot .avatar { background: linear-gradient(160deg,#c7d2fe,#818cf8); margin-right: 10px; }
+    .msg .bubble {
+      max-width: 70%; padding: 10px 14px; border-radius: 14px; font-size: 13px; line-height: 1.6;
+      word-break: break-word; white-space: pre-wrap;
+    }
+    .msg.user .bubble { background: #2563eb; color: #fff; border-top-right-radius: 4px; }
+    .msg.bot .bubble { background: #fff; border: 1px solid var(--border); border-top-left-radius: 4px; box-shadow: var(--shadow); }
+    .msg.bot .bubble.typing { color: var(--text-soft); }
+    .chat-input-row { display: flex; gap: 10px; margin-top: 14px; }
+    .chat-input {
+      flex: 1; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px;
+      font-size: 13px; outline: none; background: #fff; resize: none; font-family: inherit;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .chat-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+
+    /* ── 设置 ── */
+    .set-field { margin-bottom: 18px; }
+    .set-field label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 6px; font-weight: 500; }
+    .set-field input[type="text"], .set-field input[type="password"], .set-field select {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px;
+      font-size: 13px; outline: none; background: #fff; transition: border-color .2s, box-shadow .2s;
+    }
+    .set-field input:focus, .set-field select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
+    .set-field .hint { font-size: 11px; color: var(--text-soft); margin-top: 5px; line-height: 1.6; }
+    .set-row { display: flex; align-items: center; gap: 10px; }
+    .set-status { font-size: 12px; margin-top: 4px; height: 18px; }
+  </style>
+</head>
+<body>
+  <!-- 左侧导航 -->
+  <aside class="sidebar" id="sidebar">
+    <div class="logo"><img src="../assets/maid-whale-idle.jpg" alt="鲸鱼娘"></div>
+    <div class="nav-item active" data-view="pet">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6"/></svg>
+      <span class="tip">宠物</span>
+    </div>
+    <div class="nav-item" data-view="nurture">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 9h6M9 13h4"/></svg>
+      <span class="tip">养成</span>
+    </div>
+    <div class="nav-item" data-view="skin">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 9 9c0-5-4-9-9-9z"/><path d="M12 3v9l7 4"/></svg>
+      <span class="tip">皮肤</span>
+    </div>
+    <div class="nav-item" data-view="theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg>
+      <span class="tip">主题</span>
+    </div>
+    <div class="nav-item" data-view="usage">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 14h2M12 14h5"/></svg>
+      <span class="tip">用量</span>
+    </div>
+    <div class="nav-item" data-view="chat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H4l2-3a8 8 0 1 1 15-5z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg>
+      <span class="tip">对话</span>
+    </div>
+    <div class="nav-item" data-view="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.01a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.01a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.01a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="tip">设置</span>
+    </div>
+    <div class="nav-item" data-view="log">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg>
+      <span class="tip">日志</span>
+    </div>
+  </aside>
+
+  <!-- 右侧内容 -->
+  <main class="content" id="content">
+    <!-- 宠物 -->
+    <section class="view" data-view="pet">
+      <div class="content-header">
+        <div><h1>我的鲸鱼娘</h1><div class="sub" id="pet-sub">陪伴 AI 干活的桌面伙伴</div></div>
+        <div class="conn-pill" id="conn-pill"><span class="dot"></span><span id="conn-text">检测中</span></div>
+      </div>
+      <div class="card">
+        <div class="pet-hero">
+          <div class="pet-avatar" id="pet-avatar"><img src="../assets/maid-whale-idle.jpg" alt="鲸鱼娘"></div>
+          <div class="pet-name" id="pet-name-wrap">
+            <span id="pet-name">鲸鱼娘</span>
+            <button class="name-edit" id="btn-rename" title="改名字">✏️</button>
+          </div>
+          <div class="pet-state" id="pet-state">待机中</div>
+          <div class="pet-actions">
+            <button class="btn btn-orange" id="btn-feed">🍚 喂饭</button>
+            <button class="btn btn-soft" id="btn-pat">💕 摸头</button>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📊 养成概览</div>
+        <div class="stat"><span class="ic">🍚</span><span class="label">饱腹</span><div class="bar"><div class="bar-fill" id="pv-satiety"></div></div><span class="val" id="pv-satiety-v">0</span></div>
+        <div class="stat"><span class="ic">💕</span><span class="label">好感</span><div class="bar"><div class="bar-fill pink" id="pv-affection"></div></div><span class="val" id="pv-affection-v">0</span></div>
+        <div class="stat"><span class="ic">🌱</span><span class="label">成长</span><div class="bar"><div class="bar-fill green" id="pv-growth"></div></div><span class="val" id="pv-growth-v">0</span></div>
+      </div>
+    </section>
+
+    <!-- 养成 -->
+    <section class="view" data-view="nurture" style="display:none">
+      <div class="content-header"><div><h1>养成</h1><div class="sub">喂她、摸她、陪她长大</div></div></div>
+      <div class="card">
+        <div class="stage-banner"><span class="stage-emoji" id="nt-stage-emoji">🐣</span><div><div class="stage-name" id="nt-stage-name">鲸鱼宝宝</div><div class="stage-desc" id="nt-stage-desc">陪伴 AI 干活，积累成长值</div></div></div>
+        <div class="stat"><span class="ic">🍚</span><span class="label">饱腹</span><div class="bar"><div class="bar-fill" id="nt-satiety"></div></div><span class="val" id="nt-satiety-v">0</span></div>
+        <div class="stat"><span class="ic">💕</span><span class="label">好感</span><div class="bar"><div class="bar-fill pink" id="nt-affection"></div></div><span class="val" id="nt-affection-v">0</span></div>
+        <div class="stat"><span class="ic">🌱</span><span class="label">成长</span><div class="bar"><div class="bar-fill green" id="nt-growth"></div></div><span class="val" id="nt-growth-v">0</span></div>
+        <div class="stat-mini">喂食 <span id="nt-feeds">0</span> 次 · 摸头 <span id="nt-pats">0</span> 次 · 陪干活 <span id="nt-work">0</span> 轮</div>
+      </div>
+    </section>
+
+    <!-- 皮肤 -->
+    <section class="view" data-view="skin" style="display:none">
+      <div class="content-header"><div><h1>皮肤</h1><div class="sub">点选切换鲸鱼娘形象</div></div></div>
+      <div class="card">
+        <div class="skin-grid" id="skin-grid"></div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:10px">放图即用：新建 assets/skins/&lt;名字&gt;/，放入 idle/thinking/coding/success/error 图</div>
+      </div>
+    </section>
+
+    <!-- 主题 -->
+    <section class="view" data-view="theme" style="display:none">
+      <div class="content-header"><div><h1>主题</h1><div class="sub">切换气泡与背景配色</div></div></div>
+      <div class="card">
+        <div class="theme-grid" id="theme-grid"></div>
+      </div>
+    </section>
+
+    <!-- 用量/余额 -->
+    <section class="view" data-view="usage" style="display:none">
+      <div class="content-header">
+        <div><h1>用量与余额</h1><div class="sub">DeepSeek 实时消耗 · 每次结算一轮</div></div>
+        <button class="btn btn-soft" id="btn-refresh-balance">🔄 刷新余额</button>
+      </div>
+      <div class="card">
+        <div class="card-title">💰 账户余额</div>
+        <div class="usage-grid">
+          <div class="usage-cell"><div class="u-label">总余额</div><div class="u-value" id="ug-balance">--</div></div>
+          <div class="usage-cell"><div class="u-label">可用</div><div class="u-value" id="ug-available">--</div></div>
+        </div>
+        <div class="usage-note" id="ug-balance-note">未配置 DeepSeek API Key，可在设置里填写后刷新（仅安全加密存本机，不填也能统计消耗）。</div>
+      </div>
+      <div class="card">
+        <div class="card-title">📊 本次会话消耗</div>
+        <div class="usage-grid">
+          <div class="usage-cell"><div class="u-label">本轮费用</div><div class="u-value" id="ug-session-cost">¥0.0000</div></div>
+          <div class="usage-cell"><div class="u-label">本轮 Token</div><div class="u-value" id="ug-session-tokens">0</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">📈 累计消耗</div>
+        <div class="usage-grid">
+          <div class="usage-cell"><div class="u-label">累计费用</div><div class="u-value" id="ug-total-cost">¥0.0000</div></div>
+          <div class="usage-cell"><div class="u-label">累计 Token</div><div class="u-value" id="ug-total-tokens">0</div></div>
+        </div>
+        <div class="stat-mini">已完成 <span id="ug-turns">0</span> 轮 · 每轮按 DeepSeek 官方价格估算</div>
+      </div>
+      <div class="card">
+        <div class="card-title">🕘 每轮结算历史</div>
+        <div id="ug-history"><div class="empty-tip">暂无结算记录</div></div>
+      </div>
+    </section>
+
+    <!-- 对话 -->
+    <section class="view" data-view="chat" style="display:none">
+      <div class="content-header">
+        <div><h1>和鲸鱼娘聊天</h1><div class="sub">温柔的女仆鲸鱼娘，随时陪你唠嗑 ~</div></div>
+      </div>
+      <div class="card chat-wrap">
+        <div class="chat-box" id="chat-box">
+          <div class="msg bot">
+            <div class="avatar"><img src="../assets/maid-whale-idle.jpg" alt="鲸鱼娘"></div>
+            <div class="bubble">嗨，我是鲸鱼娘(≧▽≦) 想聊点什么呀？</div>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <textarea class="chat-input" id="chat-input" rows="2" placeholder="说点什么…（Enter 发送，Shift+Enter 换行）"></textarea>
+          <button class="btn btn-primary" id="btn-chat-send" style="align-self:stretch">发送</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 设置 -->
+    <section class="view" data-view="settings" style="display:none">
+      <div class="content-header"><div><h1>设置</h1><div class="sub">状态源、地址与 DeepSeek API</div></div></div>
+      <div class="card">
+        <div class="card-title"><span class="dot"></span>状态源</div>
+        <div class="set-field">
+          <label for="set-state-source">状态源</label>
+          <select id="set-state-source">
+            <option value="dsh">DeepSeek Harness（DSH 事件流）</option>
+            <option value="hooks">通用 Hooks 端口（任意 AI 工具推送）</option>
+          </select>
+          <div class="hint">DSH：监听事件流实时驱动；Hooks：任意工具 curl 推送状态（127.0.0.1:8765）</div>
+        </div>
+        <div class="set-field">
+          <label for="set-base-url">DSH 地址</label>
+          <input type="text" id="set-base-url" placeholder="http://127.0.0.1:3080">
+          <div class="hint">运行 DeepSeek Harness Web 的地址（本机默认 http://127.0.0.1:3080）</div>
+        </div>
+        <div class="set-field">
+          <label for="set-api-key">DeepSeek API Key</label>
+          <input type="password" id="set-api-key" placeholder="sk-…（用于余额查询与聊天，可选）" autocomplete="off">
+          <div class="hint">仅安全加密存本机（Windows 凭据，明文不落盘）。不填也能用桌宠和消耗统计，只是查不了余额、不能聊天。</div>
+        </div>
+        <div class="set-row">
+          <input type="checkbox" id="set-auto-start">
+          <label for="set-auto-start" style="font-size:13px;color:var(--text)">开机自启</label>
+        </div>
+        <div style="margin-top:18px;display:flex;gap:10px;justify-content:flex-end">
+          <button class="btn btn-primary" id="btn-settings-save">保存设置</button>
+        </div>
+        <div class="set-status" id="settings-status"></div>
+      </div>
+    </section>
+
+    <!-- 日志 -->
+    <section class="view" data-view="log" style="display:none">
+      <div class="content-header"><div><h1>运行日志</h1><div class="sub">连接与状态事件</div></div></div>
+      <div class="card">
+        <div class="log-box" id="log-box"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="panel.js"></script>
+</body>
+</html>

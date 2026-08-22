@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蓝色女仆鲸鱼娘桌宠</title>
+    <style id="theme-vars">
+:root {
+  --pet-background: #f8fafc;
+  --pet-foreground: #1e293b;
+  --pet-card: #ffffff;
+  --pet-card-foreground: #1e293b;
+  --pet-popover: #ffffff;
+  --pet-popover-foreground: #1e293b;
+  --pet-primary: #3b82f6;
+  --pet-primary-foreground: #ffffff;
+  --pet-muted: #e2e8f0;
+  --pet-muted-foreground: #64748b;
+  --pet-border: #cbd5e1;
+  --pet-input: #e2e8f0;
+  --pet-ring: #60a5fa;
+  --pet-radius-sm: 0.375rem;
+  --pet-radius-md: 0.75rem;
+  --pet-radius-lg: 1rem;
+}
+
+.dark {
+  --pet-background: #0f172a;
+  --pet-foreground: #f1f5f9;
+  --pet-card: #1e293b;
+  --pet-card-foreground: #f1f5f9;
+  --pet-popover: #1e293b;
+  --pet-popover-foreground: #f1f5f9;
+  --pet-primary: #60a5fa;
+  --pet-primary-foreground: #0f172a;
+  --pet-muted: #334155;
+  --pet-muted-foreground: #94a3b8;
+  --pet-border: #334155;
+  --pet-input: #334155;
+  --pet-ring: #3b82f6;
+}
+
+body {
+  font-family: "Inter", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  background: var(--pet-background);
+  color: var(--pet-foreground);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--pet-background);
+    --color-foreground: var(--pet-foreground);
+    --color-card: var(--pet-card);
+    --color-card-foreground: var(--pet-card-foreground);
+    --color-popover: var(--pet-popover);
+    --color-popover-foreground: var(--pet-popover-foreground);
+    --color-primary: var(--pet-primary);
+    --color-primary-foreground: var(--pet-primary-foreground);
+    --color-muted: var(--pet-muted);
+    --color-muted-foreground: var(--pet-muted-foreground);
+    --color-border: var(--pet-border);
+    --color-input: var(--pet-input);
+    --color-ring: var(--pet-ring);
+    --radius-sm: var(--pet-radius-sm);
+    --radius-md: var(--pet-radius-md);
+    --radius-lg: var(--pet-radius-lg);
+  }
+  @layer base {
+    body { background: var(--pet-background); color: var(--pet-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--pet-background); }
+      .text-background { color: var(--pet-background); }
+      .border-background { border-color: var(--pet-background); }
+      .ring-background { --tw-ring-color: var(--pet-background); }
+      .bg-foreground { background-color: var(--pet-foreground); }
+      .text-foreground { color: var(--pet-foreground); }
+      .border-foreground { border-color: var(--pet-foreground); }
+      .ring-foreground { --tw-ring-color: var(--pet-foreground); }
+      .bg-card { background-color: var(--pet-card); }
+      .text-card { color: var(--pet-card); }
+      .border-card { border-color: var(--pet-card); }
+      .ring-card { --tw-ring-color: var(--pet-card); }
+      .bg-card-foreground { background-color: var(--pet-card-foreground); }
+      .text-card-foreground { color: var(--pet-card-foreground); }
+      .border-card-foreground { border-color: var(--pet-card-foreground); }
+      .ring-card-foreground { --tw-ring-color: var(--pet-card-foreground); }
+      .bg-popover { background-color: var(--pet-popover); }
+      .text-popover { color: var(--pet-popover); }
+      .border-popover { border-color: var(--pet-popover); }
+      .ring-popover { --tw-ring-color: var(--pet-popover); }
+      .bg-popover-foreground { background-color: var(--pet-popover-foreground); }
+      .text-popover-foreground { color: var(--pet-popover-foreground); }
+      .border-popover-foreground { border-color: var(--pet-popover-foreground); }
+      .ring-popover-foreground { --tw-ring-color: var(--pet-popover-foreground); }
+      .bg-primary { background-color: var(--pet-primary); }
+      .text-primary { color: var(--pet-primary); }
+      .border-primary { border-color: var(--pet-primary); }
+      .ring-primary { --tw-ring-color: var(--pet-primary); }
+      .bg-primary-foreground { background-color: var(--pet-primary-foreground); }
+      .text-primary-foreground { color: var(--pet-primary-foreground); }
+      .border-primary-foreground { border-color: var(--pet-primary-foreground); }
+      .ring-primary-foreground { --tw-ring-color: var(--pet-primary-foreground); }
+      .bg-muted { background-color: var(--pet-muted); }
+      .text-muted { color: var(--pet-muted); }
+      .border-muted { border-color: var(--pet-muted); }
+      .ring-muted { --tw-ring-color: var(--pet-muted); }
+      .bg-muted-foreground { background-color: var(--pet-muted-foreground); }
+      .text-muted-foreground { color: var(--pet-muted-foreground); }
+      .border-muted-foreground { border-color: var(--pet-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--pet-muted-foreground); }
+      .bg-border { background-color: var(--pet-border); }
+      .text-border { color: var(--pet-border); }
+      .border-border { border-color: var(--pet-border); }
+      .ring-border { --tw-ring-color: var(--pet-border); }
+      .bg-input { background-color: var(--pet-input); }
+      .text-input { color: var(--pet-input); }
+      .border-input { border-color: var(--pet-input); }
+      .ring-input { --tw-ring-color: var(--pet-input); }
+      .bg-ring { background-color: var(--pet-ring); }
+      .text-ring { color: var(--pet-ring); }
+      .border-ring { border-color: var(--pet-ring); }
+      .ring-ring { --tw-ring-color: var(--pet-ring); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body>
+  <main id="pet-stage" class="min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div class="absolute inset-0 -z-10 opacity-30 pointer-events-none" id="bg-bubbles"></div>
+
+    <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <!-- 宠物展示区 -->
+      <section class="relative flex flex-col items-center justify-center" aria-label="桌宠展示区">
+        <div id="speech-bubble" class="absolute -top-4 left-1/2 -translate-x-1/2 -translate-y-full bg-card text-card-foreground px-4 py-2 rounded-2xl shadow-lg border border-border opacity-0 transition-opacity duration-300 pointer-events-none max-w-[80%] text-center z-10" role="status" aria-live="polite">
+          <span id="speech-text">鲸鱼娘准备就绪~</span>
+          <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 bg-card border-r border-b border-border rotate-45"></div>
+        </div>
+
+        <div id="pet-wrapper" class="relative w-72 h-72 md:w-96 md:h-96 flex items-center justify-center transition-transform duration-300">
+          <img id="pet-img" src="../assets/maid-whale-idle.jpg" alt="蓝色女仆鲸鱼娘" class="w-full h-full object-contain drop-shadow-xl rounded-3xl bg-card/50" />
+        </div>
+
+        <div id="status-badge" class="mt-6 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium border border-primary/20">
+          <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+          <span id="status-label">待机中</span>
+        </div>
+      </section>
+
+      <!-- 控制面板 -->
+      <section id="control-panel" class="bg-card text-card-foreground rounded-3xl border border-border shadow-xl p-6 md:p-8" aria-label="控制面板">
+        <h1 class="text-2xl font-bold mb-2">蓝色女仆鲸鱼娘桌宠</h1>
+        <p class="text-muted-foreground text-sm mb-6">根据 AI 思考进程切换状态的可爱桌宠</p>
+
+        <div class="space-y-6">
+          <div>
+            <h2 class="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wide">切换状态</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <button class="state-btn px-3 py-2 rounded-xl bg-muted hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition text-sm font-medium" data-state="idle">睡觉</button>
+              <button class="state-btn px-3 py-2 rounded-xl bg-muted hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition text-sm font-medium" data-state="thinking">思考</button>
+              <button class="state-btn px-3 py-2 rounded-xl bg-muted hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition text-sm font-medium" data-state="coding">写代码</button>
+              <button class="state-btn px-3 py-2 rounded-xl bg-muted hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition text-sm font-medium" data-state="success">吃大米饭</button>
+              <button class="state-btn px-3 py-2 rounded-xl bg-muted hover:bg-primary/10 hover:text-primary border border-transparent hover:border-primary/20 transition text-sm font-medium" data-state="error">报错</button>
+            </div>
+          </div>
+
+          <div>
+            <h2 class="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wide">自动演示</h2>
+            <div class="flex items-center gap-4">
+              <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input id="auto-toggle" type="checkbox" class="w-4 h-4 rounded border-border text-primary focus:ring-ring" />
+                <span class="text-sm">循环切换状态</span>
+              </label>
+              <label class="inline-flex items-center gap-2 cursor-pointer">
+                <input id="bubble-toggle" type="checkbox" checked class="w-4 h-4 rounded border-border text-primary focus:ring-ring" />
+                <span class="text-sm">显示气泡</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-border">
+            <p class="text-xs text-muted-foreground leading-relaxed">
+              这是一个可开源的 VS Code / Cursor / Trae 插件项目预览页。插件会在编辑器右下角显示悬浮窗，并根据 AI 的 thinking / generating / error 等事件自动切换动作。
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      const petImg = document.getElementById('pet-img');
+      const petWrapper = document.getElementById('pet-wrapper');
+      const speechBubble = document.getElementById('speech-bubble');
+      const speechText = document.getElementById('speech-text');
+      const statusLabel = document.getElementById('status-label');
+      const autoToggle = document.getElementById('auto-toggle');
+      const bubbleToggle = document.getElementById('bubble-toggle');
+      const stateButtons = document.querySelectorAll('.state-btn');
+
+      const states = {
+        idle: {
+          src: '../assets/maid-whale-idle.jpg',
+          label: '待机中',
+          text: 'Zzz… 鲸鱼娘正在云朵上睡觉~',
+          animation: 'float-slow'
+        },
+        thinking: {
+          src: '../assets/maid-whale-thinking.jpg',
+          label: '思考中',
+          text: '嗯… 这个问题让我想想…',
+          animation: 'tilt'
+        },
+        coding: {
+          src: '../assets/maid-whale-coding.jpg',
+          label: '正在写代码',
+          text: '噼里啪啦！代码写起来！',
+          animation: 'type'
+        },
+        success: {
+          src: '../assets/maid-whale-success.jpg',
+          label: '完成任务',
+          text: '写完啦！奖励一大碗白米饭！',
+          animation: 'bounce'
+        },
+        error: {
+          src: '../assets/maid-whale-error.jpg',
+          label: '遇到报错',
+          text: '呜哇！编译报错了，救救我…',
+          animation: 'shake'
+        }
+      };
+
+      const stateKeys = Object.keys(states);
+      let currentState = 'idle';
+      let autoTimer = null;
+      let speechTimer = null;
+
+      function setState(state) {
+        if (!states[state]) return;
+        currentState = state;
+        const cfg = states[state];
+
+        petImg.style.opacity = '0';
+        petWrapper.className = 'relative w-72 h-72 md:w-96 md:h-96 flex items-center justify-center transition-transform duration-300';
+        void petWrapper.offsetWidth;
+        petWrapper.classList.add(cfg.animation);
+
+        setTimeout(() => {
+          petImg.src = cfg.src;
+          petImg.alt = cfg.label;
+          petImg.style.opacity = '1';
+        }, 120);
+
+        statusLabel.textContent = cfg.label;
+        updateButtons(state);
+        showSpeech(cfg.text);
+      }
+
+      function updateButtons(active) {
+        stateButtons.forEach(btn => {
+          const isActive = btn.dataset.state === active;
+          btn.classList.toggle('bg-primary', isActive);
+          btn.classList.toggle('text-primary-foreground', isActive);
+          btn.classList.toggle('border-primary', isActive);
+          btn.classList.toggle('bg-muted', !isActive);
+        });
+      }
+
+      function showSpeech(text) {
+        if (!bubbleToggle.checked) return;
+        speechText.textContent = text;
+        speechBubble.classList.remove('opacity-0');
+        clearTimeout(speechTimer);
+        speechTimer = setTimeout(() => {
+          speechBubble.classList.add('opacity-0');
+        }, 2800);
+      }
+
+      function startAuto() {
+        if (autoTimer) return;
+        let idx = stateKeys.indexOf(currentState);
+        autoTimer = setInterval(() => {
+          idx = (idx + 1) % stateKeys.length;
+          setState(stateKeys[idx]);
+        }, 3000);
+      }
+
+      function stopAuto() {
+        clearInterval(autoTimer);
+        autoTimer = null;
+      }
+
+      stateButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          stopAuto();
+          autoToggle.checked = false;
+          setState(btn.dataset.state);
+        });
+      });
+
+      autoToggle.addEventListener('change', () => {
+        if (autoToggle.checked) startAuto();
+        else stopAuto();
+      });
+
+      bubbleToggle.addEventListener('change', () => {
+        if (!bubbleToggle.checked) speechBubble.classList.add('opacity-0');
+      });
+
+      // 背景气泡
+      const bubbleContainer = document.getElementById('bg-bubbles');
+      for (let i = 0; i < 12; i++) {
+        const b = document.createElement('div');
+        const size = 20 + Math.random() * 60;
+        b.className = 'absolute rounded-full bg-primary/20';
+        b.style.width = size + 'px';
+        b.style.height = size + 'px';
+        b.style.left = Math.random() * 100 + '%';
+        b.style.top = Math.random() * 100 + '%';
+        b.style.animation = `rise ${8 + Math.random() * 10}s linear infinite`;
+        b.style.animationDelay = `-${Math.random() * 10}s`;
+        bubbleContainer.appendChild(b);
+      }
+
+      setState('idle');
+    })();
+  </script>
+
+  <style>
+    @keyframes float-slow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    @keyframes tilt {
+      0%, 100% { transform: rotate(-2deg); }
+      50% { transform: rotate(2deg); }
+    }
+    @keyframes type {
+      0%, 100% { transform: translateY(0) scale(1); }
+      25% { transform: translateY(2px) scale(0.99); }
+      75% { transform: translateY(-2px) scale(1.01); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      40% { transform: translateY(-18px) scale(1.05); }
+      60% { transform: translateY(0) scale(0.95); }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-4px) rotate(-1deg); }
+      40% { transform: translateX(4px) rotate(1deg); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+    }
+    @keyframes rise {
+      0% { transform: translateY(110vh) scale(0.8); opacity: 0; }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.3; }
+      100% { transform: translateY(-20vh) scale(1.1); opacity: 0; }
+    }
+    .float-slow { animation: float-slow 3s ease-in-out infinite; }
+    .tilt { animation: tilt 2s ease-in-out infinite; }
+    .type { animation: type 0.4s ease-in-out infinite; }
+    .bounce { animation: bounce 0.8s ease-in-out infinite; }
+    .shake { animation: shake 0.5s ease-in-out infinite; }
+  </style>
+</body>
+</html>

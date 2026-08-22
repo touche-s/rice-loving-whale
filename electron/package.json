@@ -1,0 +1,65 @@
+{
+  "name": "maid-whale-desktop-pet",
+  "version": "1.0.0",
+  "description": "蓝色女仆鲸鱼娘桌宠 - 实时感知 DeepSeek Harness AI 状态的桌面宠物",
+  "author": "maid-whale-pet",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win portable",
+    "build-installer": "electron-builder --win nsis",
+    "check": "node --check main.js && node --check preload.js && node --check renderer.js && node --check ws-client.js && node --check dsh-status-bridge.js && node --check config.js && node --check credentials.js && node --check usage.js"
+  },
+  "build": {
+    "appId": "com.maidwhale.pet",
+    "productName": "鲸鱼娘桌宠",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "style.css",
+      "ws-client.js",
+      "dsh-status-bridge.js",
+      "hooks-server.js",
+      "skins.js",
+      "nurture.js",
+      "config.js",
+      "credentials.js",
+      "usage.js",
+      "panel.html",
+      "panel.js",
+      "panel-preload.js",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^24.9.1"
+  }
+}
