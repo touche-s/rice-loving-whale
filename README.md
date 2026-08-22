@@ -1,28 +1,30 @@
 # 🐳 蓝色女仆鲸鱼娘桌宠
 
-一个实时感知 **DeepSeek Harness（DSH）** AI 状态的桌面宠物。当你让 AI 干活时，她会跟随 AI 的状态变化：思考 → 歪头呼吸，干活 → 打字，完成 → 弹跳，报错 → 发抖，还会把 AI 正在思考的文字实时显示在气泡里。
+一个实时感知 **DeepSeek Harness（DSH）** AI 状态的桌面宠物。当你让 AI 干活时，她会跟随 AI 的状态变化：思考 → 歪头推理，干活 → 敲代码，完成 → 吃大白米饭，报错 → 惊慌抱头，还会把 AI 正在思考的文字实时显示在气泡里，完成时汇报本轮消耗。
 
 ![待机](./electron/assets/idle.gif) ![思考](./electron/assets/thinking.gif) ![写代码](./electron/assets/coding.gif) ![完成](./electron/assets/success.gif) ![报错](./electron/assets/error.gif)
 
-> 角色设定：蓝色女仆装的 Q 版鲸鱼娘，会在云朵上打盹、歪头思考、噼里啪啦写代码、干饭、躲猫猫。
+> 角色设定：蓝色女仆装的 Q 版鲸鱼娘，会在云朵上打盹、歪头思考、噼里啪啦写代码、吃大白米饭、傲娇撒娇。
 
 ---
 
 ## ✨ 功能
 
 - **AI 状态实时驱动**：监听 DSH 原生事件流（mux 细粒度 + host 兜底双流），自动切换 5 种状态动画
-  - `thinking` 思考 → 歪头呼吸
-  - `working` 干活 → 打字
-  - `completed` 完成 → 弹跳
-  - `error` 报错 → 发抖
-  - `idle` 待机 → 云朵漂浮
+  - `thinking` 思考 → 歪头推理
+  - `working` 干活 → 敲代码
+  - `completed` 完成 → 吃大白米饭 🍚
+  - `error` 报错 → 惊慌抱头
+  - `idle` 待机 → 站立 → 准备睡觉 → 趴睡（渐进入睡）
 - **💬 心声气泡**：AI 正在思考/输出的文字实时显示在鲸鱼娘头顶（text-delta 流）
 - **⚠️ 审批提醒**：AI 请求执行敏感操作时，鲸鱼娘举起手弹醒目提示（红色警告条）
 - **❓ 提问提醒**：AI 想问你问题时，鲸鱼娘蹦出来提醒你回话（蓝色提示条）
-- **🔔 完成通知**：AI 完成一轮工作时，系统通知"搞定啦"
+- **🐳 和鲸鱼娘聊天**：傲娇的鲸鱼娘陪你唠嗑（deepseek-chat），可在宠物页 ✏️ 起名字
+- **🔔 完成通知**：AI 完成一轮工作时，系统通知"搞定啦"，并弹气泡汇报本轮 token 与费用
 - **💰 余额与用量**：填 DeepSeek API Key 后在面板查看账户余额、本轮/累计 Token 与估算费用、每轮结算历史
-- **互动**：单击喂饭/摸头（随机）、双击躲猫猫、拖拽移动
-- **托盘菜单**：显示/隐藏、手动切状态、设置、开机自启、退出
+- **🌱 养成系统**：喂食/摸头提升饱腹与好感，陪 AI 干活积累成长，从鲸鱼宝宝长成鲸鱼娘
+- **互动**：单击摸头、拖拽移动（喂饭在面板宠物页）
+- **托盘菜单**：显示/隐藏、手动切状态、打开面板、开机自启、退出
 - **DSH 地址可配置**：支持非本机/非默认端口的 DSH 部署
 - **断线重连**：指数退避自动重连，坏帧跳过不崩溃
 - **零运行时依赖**：状态桥只用 Node 内置能力（fetch/WebSocket/TextDecoder），手写 RFC 6455 客户端
@@ -69,10 +71,10 @@ npm start
 
 | 操作 | 效果 |
 |---|---|
-| 单击 | 随机喂饭 / 摸头 |
-| 双击 | 躲猫猫（隐藏到托盘，点托盘图标回来） |
+| 单击 | 摸头（喂饭在面板 → 宠物页 🍚） |
 | 拖拽 | 移动窗口 |
-| 托盘右键 | 显示/隐藏、切状态、设置、自启、退出 |
+| 托盘左键 | 打开面板 |
+| 托盘右键 | 显示/隐藏、切状态、打开面板、自启、退出 |
 
 ## ⚙️ 配置
 
@@ -179,16 +181,19 @@ npm run build-installer  # 打包安装版
 │   ├── package.json          # dsh.client 声明 + ./client exports
 │   └── lib/client.js         # 单文件 bundle：状态机 + 浮层 UI
 ├── electron/
-│   ├── main.js               # 主进程：窗口/托盘/设置/桥
+│   ├── main.js               # 主进程：窗口/托盘/桥/对话/用量
 │   ├── ws-client.js          # 零依赖 WebSocket 客户端（RFC 6455）
 │   ├── dsh-status-bridge.js  # 状态桥实现（双流/防抖/idle/心声）
 │   ├── config.js             # 配置读写
+│   ├── credentials.js        # API Key 加密存储（Windows DPAPI）
 │   ├── usage.js              # 余额查询 + 用量/费用统计（usage.json）
-│   ├── renderer.js           # 渲染进程：动画/互动/心声气泡
-│   ├── settings.html/js      # 设置窗口
-│   └── assets/               # 立绘（idle/thinking/coding/success/error + 表情变体）
+│   ├── renderer.js           # 渲染进程：动画/互动/心声气泡/待机三阶段
+│   ├── panel.html/js         # 控制面板（宠物/养成/皮肤/主题/用量/对话/设置/日志）
+│   ├── nurture.js            # 养成系统
+│   ├── hooks-server.js       # 通用 Hooks 状态端点
+│   └── assets/               # 立绘动图（idle/thinking/coding/success/error/sleep + 图标）
 ├── extension/                # （可选）VS Code 扩展雏形
-└── assets/                   # 设计稿/预览图
+└── config.example.json       # 配置模板（不含敏感信息）
 ```
 
 ## 🙏 致谢
