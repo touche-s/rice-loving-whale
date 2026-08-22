@@ -3,7 +3,9 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# 忽略各目录的 lock 文件，但保留 electron/package-lock.json（workflow 的 npm ci 需要）
 package-lock.json
+!electron/package-lock.json
 yarn.lock
 pnpm-lock.yaml
 
