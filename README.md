@@ -45,11 +45,13 @@ install-plugin.bat   # 或手动复制 dsh-plugin → ~/.dsh/profiles/web 并 pn
 
 **让桌宠跟随 DSH 启动/退出**（`dsh-pet-launcher/` 插件）：安装后启动 `dsh web` 自动拉起桌面桌宠，退出 DSH 自动关闭桌宠。
 
+> 详细安装、配置、原理与常见问题见 [`dsh-pet-launcher/README.md`](./dsh-pet-launcher/README.md)。
+
 ```bash
-# 1. 安装插件到 DSH web profile（需先重启桌宠为 exe 或配置路径）
-node dsh-pet-launcher/install-launcher.js <桌宠exe路径>
-# 2. 在 web profile 跑 pnpm install（或用 corepack pnpm install）
-# 3. 重启 dsh web
+# 快速安装（详见插件 README）
+node dsh-pet-launcher/install-launcher.js "<桌宠exe路径或electron源码目录>"
+cd ~/.dsh/profiles/web && corepack pnpm install
+dsh web   # 重启 dsh web 生效
 ```
 
 桌宠路径通过环境变量 `DSH_PET_PATH` 或 `~/.dsh/profiles/web/.pet-launcher-path` 指定（指向桌宠 exe 或 electron 源码目录）。
