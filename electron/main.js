@@ -324,12 +324,12 @@ function createPanelWindow() {
     return;
   }
   panelWindow = new BrowserWindow({
-    width: 860,
-    height: 640,
+    width: 1200,
+    height: 800,
     title: '🐳 鲸鱼娘面板',
     resizable: true,
-    minWidth: 640,
-    minHeight: 500,
+    minWidth: 1120,
+    minHeight: 760,
     webPreferences: {
       preload: path.join(__dirname, 'panel-preload.js'),
       contextIsolation: true,
