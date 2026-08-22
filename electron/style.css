@@ -6,12 +6,12 @@
   -webkit-user-select: none;
 }
 
-/* 主题变量（renderer.js applyTheme 设置） */
+/* 主题变量（renderer.js applyTheme 设置，DeepSeek 蓝色系） */
 :root {
-  --bubble-bg: rgba(255, 255, 255, 0.95);
-  --bubble-text: #1e293b;
-  --bubble-border: rgba(59, 130, 246, 0.25);
-  --badge-bg: rgba(15, 23, 42, 0.55);
+  --bubble-bg: rgba(238, 246, 255, 0.98);
+  --bubble-text: #174f8c;
+  --bubble-border: rgba(77, 145, 220, 0.52);
+  --badge-bg: rgba(23, 79, 140, 0.82);
 }
 
 html, body {
@@ -37,14 +37,14 @@ html, body {
   transform: translateX(-50%);
   background: var(--bubble-bg);
   color: var(--bubble-text);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 7px 14px;
   font-size: 12px;
   line-height: 1.5;
   white-space: normal;
   word-break: break-word;
   max-width: 192px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 18px rgba(31, 103, 177, 0.18);
   border: 1px solid var(--bubble-border);
   z-index: 10;
   transition: opacity 0.3s, transform 0.3s;
@@ -72,12 +72,12 @@ html, body {
 .bubble.alert.approval { border-color: #ef4444; background: rgba(254, 242, 242, 0.97); color: #7f1d1d; box-shadow: 0 4px 18px rgba(239, 68, 68, 0.35); }
 .bubble.alert.question { border-color: #3b82f6; background: rgba(239, 246, 255, 0.97); color: #1e3a8a; box-shadow: 0 4px 18px rgba(59, 130, 246, 0.35); }
 
-/* 完成汇报：本轮消耗气泡（蓝色，两行：一行 token、一行钱） */
+/* 完成汇报：本轮消耗气泡 */
 .bubble.report {
-  background: rgba(239, 246, 255, 0.97);
-  border: 1.5px solid #3b82f6;
-  color: #1e3a8a;
-  box-shadow: 0 4px 18px rgba(59, 130, 246, 0.35);
+  background: rgba(238, 246, 255, 0.98);
+  border: 1.5px solid #2f7dd1;
+  color: #174f8c;
+  box-shadow: 0 4px 18px rgba(31, 103, 177, 0.35);
   font-weight: 600;
   text-align: center;
   line-height: 1.7;
@@ -106,8 +106,8 @@ html, body {
   justify-content: center;
   font-size: 24px;
   line-height: 1;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  border: 2px solid #f59e0b;
+  box-shadow: 0 4px 14px rgba(31, 103, 177, 0.25);
+  border: 2px solid #8db9e8;
   z-index: 12;
   pointer-events: none;
   transform-origin: bottom left;
@@ -135,7 +135,7 @@ html, body {
   transform: translateX(-50%);
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-top: 6px solid rgba(255, 255, 255, 0.95);
+  border-top: 6px solid rgba(238, 246, 255, 0.98);
 }
 
 .bubble.hidden {
@@ -152,7 +152,7 @@ html, body {
   overflow: hidden;
   cursor: grab;
   -webkit-app-region: no-drag;
-  animation: none; /* 动图状态自带动画，不再浮动 */
+  animation: none;
 }
 
 .wrapper:active {
@@ -168,11 +168,11 @@ html, body {
 
 /* 状态动画：所有动图状态（idle/thinking/coding/success）自带动作，
    不再叠 CSS 摆动/跳动，避免与 GIF 叠加造成闪跳。error 仍是静态图保留抖动反馈。 */
-.wrapper { animation: none; }                 /* idle 待机：动图自带动画 */
-.wrapper.state-thinking { animation: none; }   /* thinking 思考：动图自带动画 */
-.wrapper.state-coding { animation: none; }     /* coding 干活：动图自带动画 */
-.wrapper.state-success { animation: none; }    /* success 完成：动图（吃米饭）自带动画 */
-.wrapper.state-error { animation: shake 0.5s ease-in-out infinite; }      /* 报错：静态图用抖动 */
+.wrapper { animation: none; }
+.wrapper.state-thinking { animation: none; }
+.wrapper.state-coding { animation: none; }
+.wrapper.state-success { animation: none; }
+.wrapper.state-error { animation: shake 0.5s ease-in-out infinite; }
 
 /* 摸头：轻微缩放 + 上浮 */
 .wrapper.pat-anim { animation: pat 0.8s ease-in-out; }
@@ -275,10 +275,10 @@ html, body {
   transform: translateX(-50%);
   display: none;
   gap: 4px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  padding: 4px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 12px;
+  padding: 5px;
+  box-shadow: 0 4px 16px rgba(31, 103, 177, 0.15);
   z-index: 20;
 }
 
@@ -288,16 +288,18 @@ html, body {
 
 .controls button {
   border: none;
-  background: #e2e8f0;
-  border-radius: 6px;
-  padding: 4px 7px;
+  background: #dcecff;
+  border-radius: 8px;
+  padding: 5px 8px;
   font-size: 10px;
-  color: #334155;
+  color: #174f8c;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.2s;
+  font-weight: 600;
 }
 
 .controls button:hover {
-  background: #3b82f6;
+  background: #2f7dd1;
   color: #fff;
+  transform: translateY(-1px);
 }

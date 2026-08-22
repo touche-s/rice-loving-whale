@@ -1,9 +1,9 @@
-// 面板渲染逻辑（Docker Desktop 风格侧边栏）
+// 面板渲染逻辑（粉紫色二次元创作者中心布局）
 const THEMES = [
-  { id: 'light', label: '亮色', color: '#ffffff', fg: '#1e293b' },
-  { id: 'dark', label: '暗色', color: '#0f172a', fg: '#e2e8f0' },
-  { id: 'blue', label: '蓝色', color: '#eff6ff', fg: '#1e3a8a' },
-  { id: 'pink', label: '粉色', color: '#fff1f2', fg: '#881337' }
+  { id: 'light', label: 'Docker 浅色', color: '#f5f7fa', fg: '#172536' },
+  { id: 'dark', label: 'Docker 深色', color: '#172536', fg: '#dcecff' },
+  { id: 'blue', label: 'DeepSeek 蓝', color: '#eef6ff', fg: '#174f8c' },
+  { id: 'pink', label: '高对比蓝灰', color: '#dcecff', fg: '#123b68' }
 ];
 const STAGE_EMOJI = { baby: '🐣', teen: '🐬', adult: '🐋' };
 const STAGE_DESC = {
@@ -12,16 +12,32 @@ const STAGE_DESC = {
   adult: '成熟的大鲸娘，最可靠的伙伴！'
 };
 const STATE_LABEL = { idle: '待机中', thinking: '思考中', coding: '干活中', success: '完成了', error: '报错中' };
-const FACE = { idle: '🐳', thinking: '🤔', coding: '💻', success: '🎉', error: '💢' };
+const STATE_ICON = { idle: '💤', thinking: '🤔', coding: '💻', success: '✨', error: '💢' };
 
 let currentSkin = 'default';
 let currentTheme = 'light';
 let currentPetState = 'idle';
 
+const PAGE_TITLES = {
+  pet: '我的鲸鱼娘',
+  nurture: '养成',
+  skin: '皮肤装扮',
+  theme: '主题配色',
+  usage: '用量与余额',
+  chat: '和鲸鱼娘聊天',
+  settings: '设置',
+  log: '运行日志'
+};
+
 // ── 导航切换 ──
 function switchView(view) {
   document.querySelectorAll('.nav-item').forEach((n) => n.classList.toggle('active', n.dataset.view === view));
-  document.querySelectorAll('.view').forEach((v) => { v.style.display = v.dataset.view === view ? '' : 'none'; });
+  document.querySelectorAll('.view').forEach((v) => v.classList.toggle('active', v.dataset.view === view));
+  const titleText = document.getElementById('topbar-title-text');
+  const sub = document.getElementById('pet-sub');
+  if (titleText) titleText.textContent = PAGE_TITLES[view] || '鲸鱼娘';
+  if (sub) sub.textContent = view === 'pet' ? '陪伴 AI 干活的桌面伙伴' : '';
+  document.getElementById('main-scroll').scrollTop = 0;
 }
 
 async function init() {
@@ -47,20 +63,23 @@ async function init() {
   await loadChatHistory();
   await initSettingsValues();
   initSettings();
+  initHeroActions();
+  initStateTags();
 
   // 实时监听
   window.panelAPI.onLog((e) => appendLog(e));
   window.panelAPI.onNurture((snap) => renderNurture(snap));
   window.panelAPI.onUsage((snap) => renderUsage(snap));
 
-  // 按钮
+  // 主按钮
   document.getElementById('btn-feed').addEventListener('click', async () => { renderNurture(await window.panelAPI.nurtureAction('feed')); renderPet(); });
   document.getElementById('btn-pat').addEventListener('click', async () => { renderNurture(await window.panelAPI.nurtureAction('pat')); });
   document.getElementById('btn-refresh-balance').addEventListener('click', async () => {
-    document.getElementById('btn-refresh-balance').textContent = '🔄 刷新中…';
+    const btn = document.getElementById('btn-refresh-balance');
+    btn.textContent = '🔄 刷新中…';
     const b = await window.panelAPI.refreshBalance();
     renderBalance(b);
-    document.getElementById('btn-refresh-balance').textContent = '🔄 刷新余额';
+    btn.textContent = '🔄 刷新';
   });
 
   // 初始日志
@@ -76,9 +95,42 @@ const PET_IMG = {
   error: 'error.gif'
 };
 function renderPet() {
-  document.getElementById('pet-state').textContent = STATE_LABEL[currentPetState] || currentPetState;
+  const stateEl = document.getElementById('pet-state');
+  if (stateEl) stateEl.textContent = STATE_LABEL[currentPetState] || currentPetState;
+
+  const iconEl = document.getElementById('pet-state-icon');
+  if (iconEl) iconEl.textContent = STATE_ICON[currentPetState] || '🐳';
+
   const img = document.querySelector('#pet-avatar img');
   if (img) img.src = './assets/' + (PET_IMG[currentPetState] || 'idle.gif');
+
+  // 同步更新状态标签选中态
+  document.querySelectorAll('#state-tags .quick-tag').forEach((t) => {
+    t.classList.toggle('active', t.dataset.state === currentPetState);
+  });
+}
+
+function initStateTags() {
+  document.querySelectorAll('#state-tags .quick-tag').forEach((tag) => {
+    tag.addEventListener('click', async () => {
+      const state = tag.dataset.state;
+      currentPetState = state;
+      await window.panelAPI.setState(state);
+      renderPet();
+    });
+  });
+}
+
+function initHeroActions() {
+  document.getElementById('btn-hero-feed')?.addEventListener('click', async () => {
+    renderNurture(await window.panelAPI.nurtureAction('feed'));
+    renderPet();
+  });
+  document.getElementById('btn-hero-pat')?.addEventListener('click', async () => {
+    renderNurture(await window.panelAPI.nurtureAction('pat'));
+  });
+  document.getElementById('btn-hero-chat')?.addEventListener('click', () => switchView('chat'));
+  document.getElementById('btn-hero-usage')?.addEventListener('click', () => switchView('usage'));
 }
 
 // 宠物名字：显示 + 改名
@@ -86,10 +138,11 @@ async function initPetName() {
   try {
     const cfg = await window.panelAPI.getConfig();
     const nameEl = document.getElementById('pet-name');
-    if (cfg && cfg.petName) nameEl.textContent = cfg.petName;
+    if (cfg && cfg.petName && nameEl) nameEl.textContent = cfg.petName;
   } catch (e) {}
   const editBtn = document.getElementById('btn-rename');
   const nameEl = document.getElementById('pet-name');
+  if (!editBtn || !nameEl) return;
   editBtn.addEventListener('click', () => {
     const input = document.createElement('input');
     input.className = 'name-input';
@@ -114,44 +167,67 @@ async function initPetName() {
 // ── 连接状态 ──
 function renderConn(state) {
   const pill = document.getElementById('conn-pill');
-  pill.className = 'conn-pill' + (state.connected ? ' on' : '');
-  document.getElementById('conn-text').textContent = state.connected ? '已连接' : '未连接';
-  document.getElementById('pet-sub').textContent =
-    `状态源: ${state.source === 'hooks' ? '通用 Hooks 端口' : 'DSH'} · 当前: ${STATE_LABEL[state.currentState] || state.currentState}`;
+  const text = document.getElementById('conn-text');
+  const sub = document.getElementById('pet-sub');
+  if (pill) {
+    pill.className = 'tag-pill' + (state.connected ? ' on' : ' off');
+  }
+  if (text) text.textContent = state.connected ? '已连接' : '未连接';
+  if (sub) {
+    sub.textContent = `状态源: ${state.source === 'hooks' ? '通用 Hooks 端口' : 'DSH'} · 当前: ${STATE_LABEL[state.currentState] || state.currentState}`;
+  }
 }
 
 // ── 养成渲染 ──
 function renderNurture(snap) {
   if (!snap) return;
   const e = snap.stageId || 'baby';
-  const set = (id, w, v) => {
-    document.getElementById(id).style.width = (w * (id.includes('growth') ? 100 : 1)) + '%';
-  };
+
   // 宠物视图概览
-  document.getElementById('pv-satiety').style.width = snap.satiety + '%';
-  document.getElementById('pv-satiety-v').textContent = snap.satiety;
-  document.getElementById('pv-affection').style.width = snap.affection + '%';
-  document.getElementById('pv-affection-v').textContent = snap.affection;
-  document.getElementById('pv-growth').style.width = (snap.stageProgress * 100) + '%';
-  document.getElementById('pv-growth-v').textContent = snap.growth;
+  setStat('pv-satiety', snap.satiety);
+  setStat('pv-affection', snap.affection);
+  setStat('pv-growth', (snap.stageProgress || 0) * 100);
+
   // 养成视图
-  document.getElementById('nt-stage-emoji').textContent = STAGE_EMOJI[e] || '🐣';
-  document.getElementById('nt-stage-name').textContent = snap.stageName;
-  document.getElementById('nt-stage-desc').textContent = STAGE_DESC[e] || '';
-  document.getElementById('nt-satiety').style.width = snap.satiety + '%';
-  document.getElementById('nt-satiety-v').textContent = snap.satiety;
-  document.getElementById('nt-affection').style.width = snap.affection + '%';
-  document.getElementById('nt-affection-v').textContent = snap.affection;
-  document.getElementById('nt-growth').style.width = (snap.stageProgress * 100) + '%';
-  document.getElementById('nt-growth-v').textContent = snap.growth;
-  document.getElementById('nt-feeds').textContent = snap.totalFeeds;
-  document.getElementById('nt-pats').textContent = snap.totalPats;
-  document.getElementById('nt-work').textContent = snap.totalWorkSessions;
+  const stageEmoji = document.getElementById('nt-stage-emoji');
+  if (stageEmoji) stageEmoji.textContent = STAGE_EMOJI[e] || '🐣';
+  const stageName = document.getElementById('nt-stage-name');
+  if (stageName) stageName.textContent = snap.stageName || '鲸鱼宝宝';
+  const stageDesc = document.getElementById('nt-stage-desc');
+  if (stageDesc) stageDesc.textContent = STAGE_DESC[e] || '';
+
+  setStat('nt-satiety', snap.satiety);
+  setStat('nt-affection', snap.affection);
+  setStat('nt-growth', (snap.stageProgress || 0) * 100);
+
+  const feeds = document.getElementById('nt-feeds');
+  const pats = document.getElementById('nt-pats');
+  const work = document.getElementById('nt-work');
+  if (feeds) feeds.textContent = snap.totalFeeds || 0;
+  if (pats) pats.textContent = snap.totalPats || 0;
+  if (work) work.textContent = snap.totalWorkSessions || 0;
+
+  // 养成需求角标
+  const badge = document.getElementById('nav-nurture-badge');
+  if (badge) {
+    const needs = (snap.needs || []).length || (snap.hungry || snap.sleepy ? 1 : 0);
+    badge.classList.toggle('show', needs > 0);
+    badge.textContent = needs > 0 ? '!' : '';
+  }
+}
+
+function setStat(baseId, value) {
+  const bar = document.getElementById(baseId);
+  const num = document.getElementById(baseId + '-v');
+  const pct = Math.max(0, Math.min(100, value));
+  if (bar) bar.style.width = pct + '%';
+  if (num) num.textContent = Math.round(value);
 }
 
 // ── 皮肤渲染 ──
 function renderSkins(skins) {
   const grid = document.getElementById('skin-grid');
+  if (!grid) return;
   grid.innerHTML = '';
   for (const skin of skins) {
     const idleFile = skin.id === 'default'
@@ -173,6 +249,7 @@ function renderSkins(skins) {
 // ── 主题渲染 ──
 function renderThemes() {
   const grid = document.getElementById('theme-grid');
+  if (!grid) return;
   grid.innerHTML = '';
   for (const t of THEMES) {
     const card = document.createElement('div');
@@ -196,25 +273,36 @@ function fmtMoney(v) {
 function renderBalance(b) {
   if (!b) { return; }
   const ok = b.ok === true;
-  document.getElementById('ug-balance').textContent = ok ? (b.totalBalance || '0') + ' ' + (b.currency || '') : '--';
-  document.getElementById('ug-available').textContent = ok ? (b.isAvailable ? '可用' : '不可用') : '--';
+  const balanceEl = document.getElementById('ug-balance');
+  const availableEl = document.getElementById('ug-available');
   const note = document.getElementById('ug-balance-note');
-  if (ok) {
-    note.textContent = `余额：${b.totalBalance} ${b.currency}（赠送 ${b.grantedBalance} · 充值 ${b.toppedUpBalance}）${b.stale ? ' · 缓存数据' : ''}`;
-  } else {
-    note.textContent = b.error || '未配置 DeepSeek API Key，请在设置里填写后刷新。';
+  if (balanceEl) balanceEl.textContent = ok ? (b.totalBalance || '0') + ' ' + (b.currency || '') : '--';
+  if (availableEl) availableEl.textContent = ok ? (b.isAvailable ? '可用' : '不可用') : '--';
+  if (note) {
+    if (ok) {
+      note.textContent = `余额：${b.totalBalance} ${b.currency}（赠送 ${b.grantedBalance} · 充值 ${b.toppedUpBalance}）${b.stale ? ' · 缓存数据' : ''}`;
+    } else {
+      note.textContent = b.error || '未配置 DeepSeek API Key，请在设置里填写后刷新。';
+    }
   }
 }
 function renderUsage(snap) {
   if (!snap) return;
   renderBalance(snap.balance);
-  document.getElementById('ug-session-cost').textContent = fmtMoney(snap.sessionCost);
-  document.getElementById('ug-session-tokens').textContent = snap.sessionTokens || 0;
-  document.getElementById('ug-total-cost').textContent = fmtMoney(snap.totalCost);
-  document.getElementById('ug-total-tokens').textContent = snap.totalTokens || 0;
-  document.getElementById('ug-turns').textContent = snap.turns || 0;
+  const sessionCost = document.getElementById('ug-session-cost');
+  const sessionTokens = document.getElementById('ug-session-tokens');
+  const totalCost = document.getElementById('ug-total-cost');
+  const totalTokens = document.getElementById('ug-total-tokens');
+  const turns = document.getElementById('ug-turns');
+  if (sessionCost) sessionCost.textContent = fmtMoney(snap.sessionCost);
+  if (sessionTokens) sessionTokens.textContent = snap.sessionTokens || 0;
+  if (totalCost) totalCost.textContent = fmtMoney(snap.totalCost);
+  if (totalTokens) totalTokens.textContent = snap.totalTokens || 0;
+  if (turns) turns.textContent = snap.turns || 0;
+
   const hist = document.getElementById('ug-history');
   const list = snap.history || [];
+  if (!hist) return;
   if (!list.length) {
     hist.innerHTML = '<div class="empty-tip">暂无结算记录</div>';
     return;
@@ -230,6 +318,7 @@ function renderUsage(snap) {
 const chatHistory = []; // { role, content }
 function appendMsg(role, text) {
   const box = document.getElementById('chat-box');
+  if (!box) return null;
   const row = document.createElement('div');
   row.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
   const avatar = document.createElement('div');
@@ -238,7 +327,7 @@ function appendMsg(role, text) {
     avatar.textContent = '🙂';
   } else {
     const im = document.createElement('img');
-    im.src = './assets/maid-whale-idle.jpg';
+    im.src = './assets/icon-512.png';
     im.alt = '鲸鱼娘';
     avatar.appendChild(im);
   }
@@ -259,9 +348,8 @@ async function sendChat() {
   input.value = '';
   appendMsg('user', text);
   chatHistory.push({ role: 'user', content: text });
-  // 显示"正在思考"
   const typingBubble = appendMsg('bot', '正在想… 💭');
-  typingBubble.classList.add('typing');
+  if (typingBubble) typingBubble.classList.add('typing');
   sendBtn.disabled = true;
   sendBtn.textContent = '…';
   let res = null;
@@ -282,7 +370,8 @@ async function sendChat() {
   sendBtn.disabled = false;
   sendBtn.textContent = '发送';
   window.panelAPI.saveChatHistory(chatHistory);
-  document.getElementById('chat-box').scrollTop = document.getElementById('chat-box').scrollHeight;
+  const box = document.getElementById('chat-box');
+  if (box) box.scrollTop = box.scrollHeight;
 }
 
 // 加载本地聊天记录（重开面板恢复）
@@ -292,7 +381,8 @@ async function loadChatHistory() {
     if (!Array.isArray(saved) || !saved.length) return;
     chatHistory.length = 0;
     const box = document.getElementById('chat-box');
-    box.innerHTML = ''; // 清掉初始问候语
+    if (!box) return;
+    box.innerHTML = '';
     for (const m of saved) {
       if (m && m.role && typeof m.content === 'string') {
         chatHistory.push({ role: m.role, content: m.content });
@@ -305,8 +395,8 @@ async function loadChatHistory() {
 function initChat() {
   const input = document.getElementById('chat-input');
   const send = document.getElementById('btn-chat-send');
-  send.addEventListener('click', sendChat);
-  input.addEventListener('keydown', (e) => {
+  if (send) send.addEventListener('click', sendChat);
+  if (input) input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendChat();
@@ -319,16 +409,21 @@ async function initSettingsValues() {
   try {
     const cfg = await window.panelAPI.getConfig();
     if (!cfg) return;
-    document.getElementById('set-state-source').value = cfg.stateSource === 'hooks' ? 'hooks' : 'dsh';
-    document.getElementById('set-base-url').value = cfg.baseUrl || 'http://127.0.0.1:3080';
-    document.getElementById('set-api-key').value = cfg.deepseekApiKey || '';
-    document.getElementById('set-auto-start').checked = !!cfg.openAtLogin;
+    const source = document.getElementById('set-state-source');
+    const baseUrl = document.getElementById('set-base-url');
+    const apiKey = document.getElementById('set-api-key');
+    const autoStart = document.getElementById('set-auto-start');
+    if (source) source.value = cfg.stateSource === 'hooks' ? 'hooks' : 'dsh';
+    if (baseUrl) baseUrl.value = cfg.baseUrl || 'http://127.0.0.1:3080';
+    if (apiKey) apiKey.value = cfg.deepseekApiKey || '';
+    if (autoStart) autoStart.checked = !!cfg.openAtLogin;
   } catch (e) { /* 忽略 */ }
 }
 
 function initSettings() {
   const save = document.getElementById('btn-settings-save');
   const status = document.getElementById('settings-status');
+  if (!save) return;
   save.addEventListener('click', async () => {
     const stateSource = document.getElementById('set-state-source').value;
     const baseUrl = document.getElementById('set-base-url').value.trim();
@@ -347,8 +442,8 @@ function initSettings() {
     });
     status.textContent = '已保存 ✓（API Key 已加密存储）';
     status.style.color = '#059669';
-    // 清空 key 输入框（已保存到加密存储）
-    document.getElementById('set-api-key').value = '';
+    const apiKeyInput = document.getElementById('set-api-key');
+    if (apiKeyInput) apiKeyInput.value = '';
     setTimeout(() => { status.textContent = ''; }, 2500);
     return saved;
   });
@@ -357,6 +452,7 @@ function initSettings() {
 // ── 日志 ──
 function appendLog(entry) {
   const box = document.getElementById('log-box');
+  if (!box) return;
   const line = document.createElement('div');
   line.className = 'log-line';
   const time = (entry.t || '').slice(11, 19);
