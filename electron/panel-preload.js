@@ -23,6 +23,7 @@ contextBridge.exposeInMainWorld('panelAPI', {
   presetActivate: (id) => ipcRenderer.invoke('preset-activate', id),
   presetUploadImage: (presetId, srcPath, fileName) => ipcRenderer.invoke('preset-upload-image', { presetId, srcPath, fileName }),
   pickImage: () => ipcRenderer.invoke('panel-pick-image'),
+  confirm: (message) => ipcRenderer.invoke('panel-confirm', { message }),
   onLog: (cb) => ipcRenderer.on('panel-log', (event, entry) => cb(entry)),
   onNurture: (cb) => ipcRenderer.on('panel-nurture', (event, snap) => cb(snap)),
   onUsage: (cb) => ipcRenderer.on('panel-usage', (event, snap) => cb(snap))

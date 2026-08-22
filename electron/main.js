@@ -508,6 +508,21 @@ ipcMain.handle('panel-pick-image', async (event) => {
     return null;
   }
 });
+// 确认对话框（renderer 无 window.confirm）
+ipcMain.handle('panel-confirm', async (event, { message }) => {
+  try {
+    const r = await dialog.showMessageBox({
+      type: 'warning',
+      buttons: ['取消', '确定'],
+      defaultId: 1,
+      cancelId: 0,
+      message: message || '确定？'
+    });
+    return r.response === 1;
+  } catch (e) {
+    return false;
+  }
+});
 // 上传自定义图到预设目录：返回可存入 files 的相对路径（preset-files/<id>/<file>）
 ipcMain.handle('preset-upload-image', async (event, { presetId, srcPath, fileName }) => {
   try {

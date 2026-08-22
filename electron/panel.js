@@ -267,7 +267,8 @@ async function renderPresets() {
     const del = card.querySelector('.preset-del');
     if (del) del.addEventListener('click', async (e) => {
       e.stopPropagation();
-      if (!confirm('删除预设「' + p.name + '」？')) return;
+      const ok = await window.panelAPI.confirm('删除预设「' + p.name + '」？');
+      if (!ok) return;
       await window.panelAPI.presetRemove(p.id);
       if (currentPreset === p.id) {
         await window.panelAPI.presetActivate('default');
@@ -281,14 +282,12 @@ async function renderPresets() {
   const active = list.find((p) => p.id === currentPreset) || list[0];
   if (active) renderPresetEditor(active);
 
-  // 新建按钮
+  // 新建按钮（Electron 不支持 window.prompt，直接建默认名）
   const addBtn = document.getElementById('btn-preset-add');
   if (addBtn && !addBtn._bound) {
     addBtn._bound = true;
     addBtn.addEventListener('click', async () => {
-      const name = prompt('预设名称：', '我的预设');
-      if (!name) return;
-      const p = await window.panelAPI.presetAdd(name);
+      const p = await window.panelAPI.presetAdd('新预设');
       await window.panelAPI.presetActivate(p.id);
       currentPreset = p.id;
       renderPresets();
@@ -306,7 +305,20 @@ function renderPresetEditor(preset) {
     return;
   }
   editor.style.display = '';
-  document.getElementById('preset-editor-title').textContent = preset.name;
+  const titleEl = document.getElementById('preset-editor-title');
+  titleEl.textContent = preset.name;
+  titleEl.contentEditable = 'true';
+  titleEl.title = '点击修改预设名称';
+  titleEl.style.outline = 'none';
+  titleEl.addEventListener('blur', async () => {
+    const newName = (titleEl.textContent || '').trim() || '未命名预设';
+    titleEl.textContent = newName;
+    await window.panelAPI.presetUpdate(preset.id, { name: newName });
+    renderPresets();
+  });
+  titleEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); titleEl.blur(); }
+  });
   states.innerHTML = '';
   for (const s of PRESET_STATES) {
     const file = (preset.files && preset.files[s.key]) || '';
@@ -323,7 +335,10 @@ function renderPresetEditor(preset) {
       const picked = await window.panelAPI.pickImage();
       if (!picked) return;
       const up = await window.panelAPI.presetUploadImage(preset.id, picked.path, picked.name);
-      if (!up || !up.ok) { alert('上传失败：' + ((up && up.error) || '未知')); return; }
+      if (!up || !up.ok) {
+        await window.panelAPI.confirm('上传失败：' + ((up && up.error) || '未知'));
+        return;
+      }
       const files = Object.assign({}, preset.files, { [s.key]: up.file });
       await window.panelAPI.presetUpdate(preset.id, { files });
       renderPresets();
