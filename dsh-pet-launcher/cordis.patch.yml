@@ -1,0 +1,5 @@
+# dsh-pet-launcher bundle patch：把桌宠启动器挂进 profile entry 树
+# 插件在 DSH 启动时 spawn 桌面桌宠进程，DSH 退出时清理。
+- insert:
+    - id: pet-launcher
+      name: 'dsh-pet-launcher'

@@ -1,0 +1,17 @@
+{
+  "name": "dsh-pet-launcher",
+  "version": "0.1.0",
+  "description": "🐳 鲸鱼娘桌宠启动器 —— DSH 启动时自动拉起桌面桌宠，DSH 退出时自动关闭",
+  "keywords": ["dsh", "deepseek-harness", "desktop-pet", "launcher", "桌宠"],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1"
+  },
+  "files": ["lib", "cordis.patch.yml"]
+}
