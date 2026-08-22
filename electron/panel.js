@@ -1,10 +1,16 @@
 // 面板渲染逻辑（粉紫色二次元创作者中心布局）
 const THEMES = [
-  { id: 'light', label: 'Docker 浅色', color: '#f5f7fa', fg: '#172536' },
-  { id: 'dark', label: 'Docker 深色', color: '#172536', fg: '#dcecff' },
-  { id: 'blue', label: 'DeepSeek 蓝', color: '#eef6ff', fg: '#174f8c' },
-  { id: 'pink', label: '高对比蓝灰', color: '#dcecff', fg: '#123b68' }
+  { id: 'light', label: '亮色', color: '#f5f7fa', fg: '#172536' },
+  { id: 'dark', label: '暗色', color: '#0e141f', fg: '#e5edf7' }
 ];
+// 把旧主题名映射到 light/dark（blue/pink 归入 light）
+function mapTheme(t) {
+  return (t === 'dark') ? 'dark' : 'light';
+}
+// 应用主题到面板：设 html data-theme
+function applyPanelTheme(theme) {
+  document.documentElement.setAttribute('data-theme', mapTheme(theme));
+}
 const STAGE_EMOJI = { baby: '🐣', teen: '🐬', adult: '🐋' };
 const STAGE_DESC = {
   baby: '刚出生的鲸鱼宝宝，陪 AI 干活慢慢长大',
@@ -46,6 +52,8 @@ async function init() {
   currentTheme = state.theme || 'light';
   currentPetState = state.currentState || 'idle';
   currentPreset = (cfg && cfg.activePreset) || 'default';
+  // 应用面板主题
+  applyPanelTheme(currentTheme);
 
   // 导航事件
   document.querySelectorAll('.nav-item').forEach((n) => n.addEventListener('click', () => switchView(n.dataset.view)));
@@ -359,13 +367,15 @@ function renderThemes() {
   const grid = document.getElementById('theme-grid');
   if (!grid) return;
   grid.innerHTML = '';
+  const activeMapped = mapTheme(currentTheme);
   for (const t of THEMES) {
     const card = document.createElement('div');
-    card.className = 'theme-card' + (t.id === currentTheme ? ' active' : '');
+    card.className = 'theme-card' + (t.id === activeMapped ? ' active' : '');
     card.innerHTML = `<div class="swatch" style="background:${t.color}"></div><div class="tname">${t.label}</div>`;
     card.addEventListener('click', async () => {
       await window.panelAPI.setAppearance({ theme: t.id });
       currentTheme = t.id;
+      applyPanelTheme(t.id);
       grid.querySelectorAll('.theme-card').forEach((c) => c.classList.remove('active'));
       card.classList.add('active');
     });

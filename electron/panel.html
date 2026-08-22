@@ -40,6 +40,37 @@
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; }
+
+    /* ── 暗色主题：覆盖关键变量（默认亮色，切 data-theme=dark 生效）── */
+    html[data-theme="dark"] {
+      --blue-50: #0f2440;
+      --blue-100: #16314f;
+      --blue-200: #1d3d63;
+      --blue-300: #2c4f7a;
+      --blue-500: #4d91dc;
+      --blue-600: #5aa0e8;
+      --blue-700: #7ab4ef;
+      --slate-50: #0f1520;
+      --slate-100: #182130;
+      --slate-200: #273448;
+      --slate-500: #9fb0c5;
+      --slate-700: #c3d0e0;
+      --slate-900: #e5edf7;
+      --cream: #0e141f;
+      --card: #17202e;
+      --text: #e5edf7;
+      --text-body: #a9b8ca;
+      --text-soft: #7e8da0;
+      --border: #273448;
+      --border-strong: #2c4f7a;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 22px rgba(0,0,0,.35);
+      --shadow-hover: 0 3px 8px rgba(0,0,0,.5), 0 14px 28px rgba(31,103,177,.3);
+    }
+    html[data-theme="dark"] .log-box { background: #0a0f18; }
+    html[data-theme="dark"] .chat-input { background: #1a2333; color: var(--text); }
+    html[data-theme="dark"] .skin-card, html[data-theme="dark"] .theme-card,
+    html[data-theme="dark"] .preset-card, html[data-theme="dark"] .state-config { background: #1a2333; }
+
     body {
       font-family: "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
       background: var(--cream);

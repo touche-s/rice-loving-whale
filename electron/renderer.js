@@ -469,21 +469,28 @@ function applyAppearance(app) {
   }
 }
 
-// 主题：给 <html> 加 data-theme 属性，CSS 变量切换配色
+// 主题：给 <html> 加 data-theme 属性，CSS 变量切换配色（亮/暗两套）
 const THEME_COLORS = {
-  light: { bubbleBg: 'rgba(238,246,255,0.98)', bubbleText: '#174f8c', bubbleBorder: 'rgba(77,145,220,0.52)', badgeBg: 'rgba(23,79,140,0.82)' },
-  dark: { bubbleBg: 'rgba(23,37,54,0.98)', bubbleText: '#dcecff', bubbleBorder: 'rgba(141,185,232,0.48)', badgeBg: 'rgba(18,59,104,0.88)' },
-  blue: { bubbleBg: 'rgba(239,246,255,0.98)', bubbleText: '#174f8c', bubbleBorder: 'rgba(77,145,220,0.55)', badgeBg: 'rgba(31,103,177,0.82)' },
-  pink: { bubbleBg: 'rgba(238,246,255,0.98)', bubbleText: '#174f8c', bubbleBorder: 'rgba(77,145,220,0.52)', badgeBg: 'rgba(23,79,140,0.82)' }
+  light: {
+    bubbleBg: 'rgba(255,255,255,0.96)', bubbleText: '#1e293b', bubbleBorder: 'rgba(37,99,235,0.28)',
+    badgeBg: 'rgba(15,23,42,0.6)'
+  },
+  dark: {
+    bubbleBg: 'rgba(23,37,54,0.96)', bubbleText: '#e2e8f0', bubbleBorder: 'rgba(96,165,250,0.4)',
+    badgeBg: 'rgba(30,64,175,0.75)'
+  }
 };
 function applyTheme(theme) {
-  const c = THEME_COLORS[theme] || THEME_COLORS.light;
+  // 旧主题名映射：blue/pink 归入 light，保持兼容
+  const map = { blue: 'light', pink: 'light', light: 'light', dark: 'dark' };
+  const t = map[theme] || 'light';
+  const c = THEME_COLORS[t];
   const root = document.documentElement.style;
   root.setProperty('--bubble-bg', c.bubbleBg);
   root.setProperty('--bubble-text', c.bubbleText);
   root.setProperty('--bubble-border', c.bubbleBorder);
   root.setProperty('--badge-bg', c.badgeBg);
-  document.documentElement.setAttribute('data-theme', theme);
+  document.documentElement.setAttribute('data-theme', t);
 }
 
 // 监听外观变化（面板/设置切换时即时生效）
