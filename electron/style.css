@@ -173,7 +173,6 @@ html, body {
 .wrapper.state-coding { animation: none; }     /* coding 干活：动图自带动画 */
 .wrapper.state-success { animation: none; }    /* success 完成：动图（吃米饭）自带动画 */
 .wrapper.state-error { animation: shake 0.5s ease-in-out infinite; }      /* 报错：静态图用抖动 */
-.wrapper.state-eat { animation: munch 0.45s ease-in-out infinite; }
 
 /* 摸头：轻微缩放 + 上浮 */
 .wrapper.pat-anim { animation: pat 0.8s ease-in-out; }
@@ -190,12 +189,6 @@ html, body {
   0% { transform: translateY(0) scale(1); opacity: 1; }
   60% { transform: translateY(10px) scale(0.6); opacity: 0.6; }
   100% { transform: translateY(40px) scale(0.1); opacity: 0; }
-}
-
-/* 吃米饭：身体微微上下颠动模拟干饭节奏 */
-@keyframes munch {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-4px) rotate(2deg); }
 }
 
 /* 呼吸 + 浮动：scaleY 模拟呼吸，translateY 模拟漂浮 */

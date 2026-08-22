@@ -56,8 +56,6 @@ let microTimer = null;
 let inMicro = false;
 let dshLastStateAt = 0;
 let dshIdleTimer = null;
-let eatTimer = null;
-let eating = false;
 
 // ── 待机三阶段：站立 → 准备睡觉 → 趴睡（一直待机渐进入睡）──
 const IDLE_STAGE_MS = { stand: 30000, prep: 15000 }; // 站立 30s → 准备 15s → 趴睡
@@ -164,9 +162,6 @@ function setState(state, opts = {}) {
   // 中断微观表情动画
   inMicro = false;
   clearTimeout(microTimer);
-  // 中断吃米饭动画
-  eating = false;
-  clearTimeout(eatTimer);
 
   // 图片切换带过渡动画（淡入 + 缩放）
   setStateImg(file);
@@ -260,30 +255,6 @@ function scheduleMicro() {
       scheduleMicro();
     }, pick.duration);
   }, next);
-}
-
-// 吃米饭动作：无专属帧图，用当前状态图 + munch CSS 动画模拟干饭节奏
-function playEat() {
-  if (eating) return;
-  eating = true;
-  clearTimeout(microTimer);
-  wakeFromSleep(); // 互动唤醒回站立
-  showBubble('干饭时间！一大碗白米饭！');
-  statusLabel.textContent = '干饭中';
-  petWrapper.classList.remove('state-idle', 'state-thinking', 'state-coding', 'state-success', 'state-error');
-  petWrapper.classList.add('state-eat');
-  petImg.style.opacity = '1';
-  petImg.style.transform = 'scale(1)';
-  petImg.src = `${ASSET_PREFIX}/eating.gif?${Date.now()}`;
-  // 养成：喂食
-  window.petAPI.nurtureAction('feed');
-
-  clearTimeout(eatTimer);
-  eatTimer = setTimeout(() => {
-    eating = false;
-    petWrapper.classList.remove('state-eat');
-    setState('idle');
-  }, 2400);
 }
 
 function toggleAutoCycle() {
@@ -402,11 +373,6 @@ window.petAPI.onDshState((state) => {
   // 避免动画中途被打断。真干活（thinking/coding 等非 idle）仍可打断。
   if (state === 'idle' && currentState === 'success' && dshIdleTimer) {
     return;
-  }
-  if (eating) {
-    eating = false;
-    clearTimeout(eatTimer);
-    petWrapper.classList.remove('state-eat');
   }
   if (autoEnabled) {
     autoEnabled = false;
