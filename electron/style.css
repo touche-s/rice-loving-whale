@@ -85,47 +85,7 @@ html, body {
   padding: 8px 12px;
 }
 
-/* 举手动画：鲸鱼娘轻快上下浮动 */
-.wrapper.alert-anim { animation: alert-up 0.5s ease-in-out 3; }
-@keyframes alert-up {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-/* 举手图标：从右侧弹出，模拟鲸鱼娘举手提醒 */
-.raise-hand {
-  position: absolute;
-  right: -8px;
-  top: 30px;
-  width: 44px;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.96);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  line-height: 1;
-  box-shadow: 0 4px 14px rgba(31, 103, 177, 0.25);
-  border: 2px solid #8db9e8;
-  z-index: 12;
-  pointer-events: none;
-  transform-origin: bottom left;
-}
-
-/* 举手弹出动画：从右侧伸出来 + 摆动 */
-.raise-hand.show {
-  animation: raise-out 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards, raise-wave 0.8s ease-in-out 0.45s infinite;
-}
-.raise-hand.hidden { display: none; }
-@keyframes raise-out {
-  0% { transform: translateX(24px) scale(0.3) rotate(20deg); opacity: 0; }
-  100% { transform: translateX(0) scale(1) rotate(0deg); opacity: 1; }
-}
-@keyframes raise-wave {
-  0%, 100% { transform: rotate(-4deg); }
-  50% { transform: rotate(8deg); }
-}
+/* 审批/提问：形象切换到对应动图（approval.gif / question.gif），见 renderer.js */
 
 .bubble::after {
   content: "";
@@ -147,6 +107,7 @@ html, body {
 .wrapper {
   width: 300px;
   height: 169px;
+  padding-top: 14px;
   overflow: visible;
   cursor: grab;
   -webkit-app-region: no-drag;
@@ -262,6 +223,12 @@ html, body {
 .badge .dot.state-coding { background: #3b82f6; }
 .badge .dot.state-success { background: #34d399; }
 .badge .dot.state-error { background: #ef4444; }
+/* 互动表情与审批/提问状态点颜色 */
+.badge .dot.state-pat { background: #ec4899; }
+.badge .dot.state-happy { background: #f59e0b; }
+.badge .dot.state-angry { background: #ef4444; }
+.badge .dot.state-approval { background: #ef4444; }
+.badge .dot.state-question { background: #3b82f6; }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }

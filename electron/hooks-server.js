@@ -8,10 +8,13 @@
  * 端点：
  *   GET  /state?state=thinking&text=正在思考...    （query 传状态）
  *   POST /state  {"state":"working","text":"干活中"}（JSON body）
+ *   GET  /alert?kind=approval&text=需要确认...     （审批/提问提醒，query 传）
+ *   POST /alert {"kind":"question","text":"问你个问题"}(JSON body)
  *   GET  /health                                 （存活探测）
  *
  * 用法（以 Claude Code hooks 为例，settings.json 里）：
  *   {"hooks": {"Stop": [{"hooks": [{"type":"command","command":"curl -s http://127.0.0.1:8765/state?state=completed"}]}]}}
+ *   权限确认：{"hooks": {"PreToolUse": [{"hooks": [{"type":"command","command":"curl -s http://127.0.0.1:8765/alert?kind=approval&text=AI 想执行操作"}]}]}}
  *
  * 归一化映射（宽松接受各种叫法）：
  *   thinking|reasoning|planning → thinking
@@ -24,6 +27,7 @@
 const http = require('http');
 
 const VALID_STATES = ['thinking', 'working', 'completed', 'error', 'idle'];
+const ALERT_KINDS = ['approval', 'question'];
 const STATE_ALIASES = {
   thinking: ['thinking', 'reasoning', 'planning', 'analyzing', 'think'],
   working: ['working', 'running', 'tool', 'coding', 'typing', 'work', 'executing', 'doing'],
@@ -42,17 +46,28 @@ function normalizeState(raw) {
   return null;
 }
 
+// 宽松接受审批/提问的各种叫法
+function normalizeKind(raw) {
+  const s = String(raw || '').trim().toLowerCase();
+  if (ALERT_KINDS.includes(s)) return s;
+  if (['permission', 'permission_request', 'confirm', 'approve', 'grant', 'need_confirm'].includes(s)) return 'approval';
+  if (['ask', 'asking', 'query', 'inquiry', 'need_ask'].includes(s)) return 'question';
+  return null;
+}
+
 /**
  * 启动状态端点服务器
  * @param {object} options
  * @param {number} options.port - 监听端口（默认 8765）
  * @param {(state: string, text: string) => void} options.onState - 状态回调
+ * @param {(kind: string, text: string) => void} options.onAlert - 审批/提问提醒回调
  * @param {(msg: string) => void} options.log - 日志回调
  * @returns {{ close(): Promise<void>, port: number }}
  */
 function startHooksServer(options = {}) {
   const port = options.port || 8765;
   const onState = options.onState || (() => {});
+  const onAlert = options.onAlert || (() => {});
   const log = options.log || (() => {});
 
   const server = http.createServer((req, res) => {
@@ -102,7 +117,41 @@ function startHooksServer(options = {}) {
       return;
     }
 
-    respond(404, { error: 'not found', hint: 'use GET/POST /state or GET /health' });
+    if (path === '/alert') {
+      // GET：query 传 kind（approval / question）
+      const qKind = url.searchParams.get('kind');
+      const qText = url.searchParams.get('text') || '';
+      if (qKind) {
+        const kind = normalizeKind(qKind);
+        if (!kind) {
+          respond(400, { accepted: false, reason: `unknown kind "${qKind}"`, valid: ALERT_KINDS });
+          return;
+        }
+        onAlert(kind, qText);
+        respond(200, { accepted: true, kind, text: qText });
+        return;
+      }
+      // POST：JSON body（异步读取）
+      let body = '';
+      req.on('data', (chunk) => { body += chunk; });
+      req.on('end', () => {
+        try {
+          const data = body ? JSON.parse(body) : {};
+          const kind = normalizeKind(data.kind);
+          if (!kind) {
+            respond(400, { accepted: false, reason: 'missing or unknown "kind"', valid: ALERT_KINDS });
+            return;
+          }
+          onAlert(kind, typeof data.text === 'string' ? data.text : '');
+          respond(200, { accepted: true, kind, text: data.text || '' });
+        } catch (e) {
+          respond(400, { accepted: false, reason: 'invalid JSON body' });
+        }
+      });
+      return;
+    }
+
+    respond(404, { error: 'not found', hint: 'use GET/POST /state or /alert, or GET /health' });
   });
 
   return new Promise((resolve, reject) => {

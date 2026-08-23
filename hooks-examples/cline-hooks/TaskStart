@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Cline TaskStart hook — 复制到 ~/Documents/Cline/Hooks/（全局）或项目 .clinerules/hooks/（仓库级）
+node /path/to/hook-notify.js working

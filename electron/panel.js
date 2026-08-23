@@ -74,6 +74,7 @@ async function init() {
   initSettings();
   initHeroActions();
   initStateTags();
+  initInteractTags();
 
   // 实时监听
   window.panelAPI.onLog((e) => appendLog(e));
@@ -81,8 +82,17 @@ async function init() {
   window.panelAPI.onUsage((snap) => renderUsage(snap));
 
   // 主按钮
-  document.getElementById('btn-feed').addEventListener('click', async () => { renderNurture(await window.panelAPI.nurtureAction('feed')); renderPet(); });
-  document.getElementById('btn-pat').addEventListener('click', async () => { renderNurture(await window.panelAPI.nurtureAction('pat')); });
+  document.getElementById('btn-feed').addEventListener('click', async () => {
+    renderNurture(await window.panelAPI.nurtureAction('feed'));
+    renderPet();
+    window.panelAPI.triggerInteract('food');
+    playPanelInteract('food', 9800);
+  });
+  document.getElementById('btn-pat').addEventListener('click', async () => {
+    renderNurture(await window.panelAPI.nurtureAction('pat'));
+    window.panelAPI.triggerInteract('pat');
+    playPanelInteract('pat');
+  });
   document.getElementById('btn-refresh-balance').addEventListener('click', async () => {
     const btn = document.getElementById('btn-refresh-balance');
     btn.textContent = '🔄 刷新中…';
@@ -130,13 +140,38 @@ function initStateTags() {
   });
 }
 
+// 互动表情按钮：点击让桌宠播放对应互动动画（摸头/开心/生气）
+// 面板左侧头像同步切换互动图，播完恢复原状态图（参照状态标签的 renderPet 行为）
+const INTERACT_IMG = { pat: 'pat.gif', happy: 'happy.gif', angry: 'angry.gif', food: 'success.gif' };
+let panelInteractTimer = null;
+function playPanelInteract(type, holdMs = 3200) {
+  const img = document.querySelector('#pet-avatar img');
+  if (!img || !INTERACT_IMG[type]) return;
+  img.src = './assets/' + INTERACT_IMG[type];
+  clearTimeout(panelInteractTimer);
+  panelInteractTimer = setTimeout(() => renderPet(), holdMs);
+}
+function initInteractTags() {
+  document.querySelectorAll('#interact-tags .quick-tag').forEach((tag) => {
+    tag.addEventListener('click', () => {
+      const type = tag.dataset.interact;
+      window.panelAPI.triggerInteract(type);
+      playPanelInteract(type);
+    });
+  });
+}
+
 function initHeroActions() {
   document.getElementById('btn-hero-feed')?.addEventListener('click', async () => {
     renderNurture(await window.panelAPI.nurtureAction('feed'));
     renderPet();
+    window.panelAPI.triggerInteract('food');
+    playPanelInteract('food', 9800);
   });
   document.getElementById('btn-hero-pat')?.addEventListener('click', async () => {
     renderNurture(await window.panelAPI.nurtureAction('pat'));
+    window.panelAPI.triggerInteract('pat');
+    playPanelInteract('pat');
   });
   document.getElementById('btn-hero-chat')?.addEventListener('click', () => switchView('chat'));
   document.getElementById('btn-hero-usage')?.addEventListener('click', () => switchView('usage'));

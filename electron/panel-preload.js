@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('panelAPI', {
   getState: () => ipcRenderer.invoke('panel-get-state'),
   setAppearance: (change) => ipcRenderer.invoke('panel-set-appearance', change),
   setState: (state) => ipcRenderer.invoke('panel-set-state', state),
+  triggerInteract: (type) => ipcRenderer.invoke('panel-trigger-interact', type),
   getConfig: () => ipcRenderer.invoke('get-config'),
   saveConfig: (cfg) => ipcRenderer.invoke('save-config', cfg),
   getNurture: () => ipcRenderer.invoke('panel-get-nurture'),
