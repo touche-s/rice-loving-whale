@@ -442,7 +442,10 @@ function appendMsg(role, text) {
   const avatar = document.createElement('div');
   avatar.className = 'avatar';
   if (role === 'user') {
-    avatar.textContent = '🙂';
+    const im = document.createElement('img');
+    im.src = './assets/icon-512.png';
+    im.alt = '用户';
+    avatar.appendChild(im);
   } else {
     const im = document.createElement('img');
     im.src = './assets/whale-avatar.png';
