@@ -250,7 +250,7 @@ function createWindow() {
     frame: false,
     alwaysOnTop: true,
     resizable: false,
-    skipTaskbar: true,
+    skipTaskbar: false,
     hasShadow: false,
     icon: path.join(__dirname, 'assets', 'icon-512.png'),
     webPreferences: {

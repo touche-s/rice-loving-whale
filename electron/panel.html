@@ -528,7 +528,8 @@
       border: 1px solid var(--pink-200);
       margin-bottom: 14px;
     }
-    .stage-banner .stage-emoji { font-size: 38px; }
+    .stage-banner .stage-emoji { width: 46px; height: 46px; flex-shrink: 0; border-radius: 10px; overflow: hidden; background: #fff; border: 1px solid var(--border); }
+    .stage-banner .stage-emoji img { width: 100%; height: 100%; object-fit: cover; }
     .stage-banner .stage-name { font-size: 16px; font-weight: 800; color: var(--pink-700); }
     .stage-banner .stage-desc { font-size: 11px; color: var(--text-body); margin-top: 2px; }
 
@@ -855,7 +856,7 @@
       <!-- 养成 -->
       <section class="view" data-view="nurture">
         <div class="stage-banner">
-          <span class="stage-emoji" id="nt-stage-emoji">🐣</span>
+          <span class="stage-emoji" id="nt-stage-emoji"><img src="./assets/icon-512.png" alt="鲸鱼娘"></span>
           <div>
             <div class="stage-name" id="nt-stage-name">鲸鱼宝宝</div>
             <div class="stage-desc" id="nt-stage-desc">陪伴 AI 干活，积累成长值</div>

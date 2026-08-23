@@ -197,9 +197,12 @@ function renderNurture(snap) {
   setStat('pv-affection', snap.affection);
   setStat('pv-growth', (snap.stageProgress || 0) * 100);
 
-  // 养成视图
+  // 养成视图（阶段用鲸鱼图标，不再用 emoji）
   const stageEmoji = document.getElementById('nt-stage-emoji');
-  if (stageEmoji) stageEmoji.textContent = STAGE_EMOJI[e] || '🐣';
+  if (stageEmoji) {
+    stageEmoji.textContent = '';
+    stageEmoji.innerHTML = '<img src="./assets/icon-512.png" alt="鲸鱼娘" style="width:100%;height:100%;object-fit:cover;border-radius:10px">';
+  }
   const stageName = document.getElementById('nt-stage-name');
   if (stageName) stageName.textContent = snap.stageName || '鲸鱼宝宝';
   const stageDesc = document.getElementById('nt-stage-desc');
@@ -443,7 +446,7 @@ function appendMsg(role, text) {
   avatar.className = 'avatar';
   if (role === 'user') {
     const im = document.createElement('img');
-    im.src = './assets/icon-512.png';
+    im.src = './assets/user-avatar.png';
     im.alt = '用户';
     avatar.appendChild(im);
   } else {
