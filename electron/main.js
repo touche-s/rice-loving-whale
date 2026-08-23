@@ -132,6 +132,14 @@ function pushPetThought(text) {
   }
 }
 
+// hooks 推送的文字：走独立通道，renderer 任意状态都显示气泡（不受 thinking 限制）
+function pushPetHooksThought(text) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    const clipped = typeof text === 'string' ? text.slice(-40) : text;
+    mainWindow.webContents.send('dsh-hooks-thought', clipped);
+  }
+}
+
 // 完成汇报：气泡显示本轮用了多少 token / 多少钱
 function pushPetUsageReport(turn) {
   if (!turn || !mainWindow || mainWindow.isDestroyed()) return;
@@ -201,33 +209,37 @@ function startDshBridge() {
   dshBridge.start();
 }
 
-async function startHooksSource() {
-  if (hooksServer) {
-    await hooksServer.close();
-    hooksServer = null;
+/**
+ * 启动状态源：hooks 端点常驻（任何模式都可在 8765 接收外部工具的状态/审批/提问推送），
+ * DSH 桥按配置启动。两者可并存：DSH 驱动日常状态，hooks 供其他工具主动推送。
+ */
+async function startStateSource() {
+  if (!hooksServer) {
+    try {
+      hooksServer = await startHooksServer({
+        port: appConfig.hooksPort || 8765,
+        onState: (state, text) => {
+          pushPetState(state, { source: 'hooks' });
+          // hooks 带文字 → 走独立通道，任意状态都能显示气泡（不受 thinking 限制）
+          if (text) pushPetHooksThought(text);
+        },
+        onAlert: (kind, text) => {
+          if (kind === 'approval') {
+            pushPetApproval({ toolName: '外部工具', reason: text || '' });
+          } else if (kind === 'question') {
+            pushPetQuestion({ questions: [{ question: text }] });
+          }
+        },
+        log: (msg) => logLine(msg)
+      });
+    } catch (e) {
+      logLine(`Hooks 端点启动失败: ${e && e.message || e}`);
+    }
   }
-  try {
-    hooksServer = await startHooksServer({
-      port: appConfig.hooksPort || 8765,
-      onState: (state, text) => {
-        pushPetState(state, { source: 'hooks' });
-        if (text) pushPetThought(text);
-      },
-      log: (msg) => logLine(msg)
-    });
-    pushConnection(true);
-  } catch (e) {
-    logLine(`Hooks 端点启动失败: ${e && e.message || e}`);
-    pushConnection(false);
-  }
-}
-
-/** 按配置启动对应状态源 */
-function startStateSource() {
-  if (appConfig.stateSource === 'hooks') {
-    startHooksSource();
-  } else {
+  if (appConfig.stateSource === 'dsh') {
     startDshBridge();
+  } else {
+    pushConnection(true);
   }
 }
 
@@ -471,6 +483,12 @@ ipcMain.handle('panel-set-appearance', (event, change) => {
 ipcMain.handle('panel-set-state', (event, state) => {
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.webContents.send('state-changed', state);
+  }
+  return true;
+});
+ipcMain.handle('panel-trigger-interact', (event, type) => {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send('pet-interact', type);
   }
   return true;
 });

@@ -23,6 +23,20 @@ const STATES = {
   error: { label: '遇到报错', text: STATE_TEXT.error, animation: 'shake' }
 };
 
+// 互动表情：单击随机触发（pat/happy/angry），审批/提问专用（approval/question）
+// restore：单击互动播完回待机；审批/提问恢复原状态（不打断 AI 干活）
+// duration：审批/提问 6s 与警示气泡同步；单击互动播完一圈即可
+const INTERACTS = {
+  pat: { file: 'pat.gif', label: '摸头中', text: '摸摸头~ 好舒服~ 🐾' },
+  happy: { file: 'happy.gif', label: '开心', text: '好耶！今天超开心！🎉' },
+  angry: { file: 'angry.gif', label: '生气', text: '哼！人家不理你了！😤' },
+  food: { file: 'success.gif', label: '干饭中', text: '开动啦~ 白米饭最香！🍚', duration: 9800 },
+  approval: { file: 'approval.gif', label: '审批中', text: '', restore: 'prev', duration: 6000 },
+  question: { file: 'question.gif', label: '提问中', text: '', restore: 'prev', duration: 6000 }
+};
+// 单击互动池（cute 素材未到位时自动跳过缺失文件）
+const CLICK_INTERACTS = ['pat', 'happy', 'angry'];
+
 function skinFile(state) {
   const f = SKIN_FILES[state];
   if (!f) return null;
@@ -62,6 +76,7 @@ const statusLabel = document.getElementById('status-label');
 const statusDot = document.querySelector('.badge .dot');
 let currentState = 'idle';
 let bubbleTimer = null;
+let interactTimer = null;   // 互动动画播放锁：播完自动恢复（单击互动回待机，审批/提问回原状态）
 let autoTimer = null;
 let autoEnabled = false;
 let dshConnected = false;
@@ -125,6 +140,11 @@ function preloadVariants() {
   for (const v of [skinVariant('eyesClosed'), skinVariant('mouthOpen')]) {
     if (v) { const img = new Image(); img.src = v; }
   }
+  // 预载互动表情图（预热浏览器缓存，单击/审批时切换即时显示）
+  for (const key of Object.keys(INTERACTS)) {
+    const img = new Image();
+    img.src = `${ASSET_PREFIX}/${INTERACTS[key].file}`;
+  }
 }
 
 // 换图带淡入缩放过渡
@@ -165,12 +185,14 @@ function setState(state, opts = {}) {
   if (alertTimer) { clearTimeout(alertTimer); alertTimer = null; }
   speechBubble.classList.remove('alert', 'approval', 'question');
   petWrapper.classList.remove('alert-anim');
-  const handEl = document.getElementById('raise-hand');
-  if (handEl) { handEl.classList.remove('show'); handEl.classList.add('hidden'); }
 
-  // 中断微观表情动画
+  // 中断微观表情动画与互动动画（新状态优先）
   inMicro = false;
   clearTimeout(microTimer);
+  if (interactTimer) {
+    clearTimeout(interactTimer);
+    interactTimer = null;
+  }
 
   // 图片切换带过渡动画（淡入 + 缩放）
   setStateImg(file);
@@ -283,22 +305,43 @@ function toggleAutoCycle() {
   }
 }
 
-// 摸头互动：气泡反应 + 轻微缩放（不切换图片，保持当前状态显示）
-function playPat() {
-  showBubble('摸摸头~ 好舒服~ 🐾');
-  statusLabel.textContent = '摸头中';
-  petWrapper.classList.remove('pat-anim');
-  void petWrapper.offsetWidth;
-  petWrapper.classList.add('pat-anim');
-  setTimeout(() => {
-    petWrapper.classList.remove('pat-anim');
-    // 动画结束恢复当前状态的标签和颜色
-    const cfg = STATES[currentState];
-    if (cfg) statusLabel.textContent = cfg.label;
-    statusDot.className = 'dot state-' + currentState;
-  }, 800);
-  // 养成：摸头
-  window.petAPI.nurtureAction('pat');
+// ── 互动表情动画 ──
+// 切到互动图 → 气泡 → 播完恢复：单击互动（pat/happy/angry）回待机；
+// 审批/提问（approval/question）恢复原状态，不打断 AI 干活。
+function playInteract(type, opts = {}) {
+  const cfg = INTERACTS[type];
+  if (!cfg) return;
+  const prevState = currentState;
+  // 打断一切：待机链 / 微观表情 / 上一次互动
+  clearIdleChain();
+  clearTimeout(microTimer);
+  inMicro = false;
+  if (interactTimer) {
+    clearTimeout(interactTimer);
+    interactTimer = null;
+  }
+  // 切图 + 标签
+  setStateImg(`${ASSET_PREFIX}/${cfg.file}`);
+  statusLabel.textContent = cfg.label;
+  statusDot.className = 'dot state-' + type;
+  petWrapper.classList.remove('state-idle', 'state-thinking', 'state-coding', 'state-success', 'state-error', 'alert-anim');
+  // 气泡：默认配置文案；bubbleText=false 表示由调用方（审批/提问警示）自行控制
+  if (opts.bubbleText !== false) {
+    showBubble(typeof opts.bubbleText === 'string' ? opts.bubbleText : cfg.text);
+  }
+  // 播完恢复
+  const holdMs = cfg.duration || 3200;
+  interactTimer = setTimeout(() => {
+    interactTimer = null;
+    const restore = cfg.restore === 'prev' ? prevState : 'idle';
+    if (restore !== currentState) setState(restore, { fromDsh: true });
+  }, holdMs);
+}
+
+// 单击随机触发一个互动动画（图由 setStateImg 即时加载，无需等待预载）
+function playRandomInteract() {
+  const pool = CLICK_INTERACTS;
+  playInteract(pool[Math.floor(Math.random() * pool.length)]);
 }
 
 // 单击互动（短按 = 喂饭/摸头随机，拖动 = 移动），双击 = 躲藏
@@ -329,15 +372,19 @@ window.addEventListener('mouseup', (e) => {
   const wasDrag = moved || Date.now() - pointerDownAt > CLICK_MAX_MS;
   dragging = false;
   if (e.button === 0 && !wasDrag) {
-    // 单击互动：固定摸头（喂饭通过面板/养成的按钮触发）
-    playPat();
+    // 单击互动：随机触发一个互动动画 + 养成安抚（喂饭通过面板/养成按钮触发）
+    playRandomInteract();
+    window.petAPI.nurtureAction('pat');
   }
   window.petAPI.dragEnd();
 });
 
-// 主进程事件：手动切状态 / 自动循环
+// 主进程事件：手动切状态 / 自动循环 / 面板触发互动表情
 window.petAPI.onStateChanged((state) => setState(state));
 window.petAPI.onCycleToggled(() => toggleAutoCycle());
+window.petAPI.onInteract((type) => {
+  if (INTERACTS[type]) playInteract(type);
+});
 
 // 心声气泡：只取最近 20 字（10 字/行 × 2 行），气泡刚好装下，不截断不滚动
 window.petAPI.onDshThought((text) => {
@@ -352,6 +399,19 @@ window.petAPI.onDshThought((text) => {
     speechBubble.classList.remove('thought');
     thoughtBuf = '';
   }, 4000);
+});
+
+// hooks 推送的文字：任意状态都显示气泡（不受 thinking 限制）
+window.petAPI.onDshHooksThought((text) => {
+  if (!text) return;
+  speechText.textContent = text;
+  speechBubble.classList.remove('thought', 'alert', 'approval', 'question');
+  speechBubble.classList.add('thought');
+  speechBubble.classList.remove('hidden');
+  clearTimeout(bubbleTimer);
+  bubbleTimer = setTimeout(() => {
+    speechBubble.classList.add('hidden');
+  }, 3500);
 });
 
 // 完成汇报：本轮用了多少 token / 多少钱（两行：一行 token、一行钱）
@@ -400,32 +460,21 @@ window.petAPI.onDshState((state) => {
 // preload 的 dsh-state / dsh-status IPC 通道推送，渲染进程只消费状态。
 // 桥状态 → 桌宠状态映射见主进程 main.js（DSH_STATE_TO_PET）。
 
-// 审批请求 / 问题询问：鲸鱼娘举手提醒（醒目提示条 + 举手动画）
+// 审批请求 / 问题询问：鲸鱼娘切到对应动图（审批举手 / 提问歪头） + 醒目警示气泡
 function showAlert(kind, text) {
-  // 复用气泡，但换醒目标记样式
+  // 形象：切到互动动图，播完恢复原状态（不打断 AI 干活）
+  playInteract(kind, { bubbleText: false });
+  // 警示气泡（审批红圈 / 提问蓝圈），文字由调用方提供
   speechBubble.classList.remove('thought');
   speechText.textContent = text;
   speechBubble.classList.add('alert', kind);
   speechBubble.classList.remove('hidden');
-  // 举手图标：从身体右侧弹出（审批红圈 / 提问蓝圈）
-  const hand = document.getElementById('raise-hand');
-  if (hand) {
-    hand.classList.remove('hidden', 'show');
-    void hand.offsetWidth;
-    hand.style.borderColor = kind === 'approval' ? '#ef4444' : '#3b82f6';
-    hand.classList.add('show');
-  }
   clearTimeout(alertTimer);
   clearTimeout(bubbleTimer);
   alertTimer = setTimeout(() => {
     speechBubble.classList.add('hidden');
     speechBubble.classList.remove('alert', 'approval', 'question');
-    if (hand) { hand.classList.remove('show'); hand.classList.add('hidden'); }
   }, 6000);
-  // 举手动画（轻轻上下浮动强调）
-  petWrapper.classList.remove('alert-anim');
-  void petWrapper.offsetWidth;
-  petWrapper.classList.add('alert-anim');
 }
 
 window.petAPI.onDshApproval((info) => {
