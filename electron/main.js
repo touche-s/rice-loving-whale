@@ -308,6 +308,13 @@ function createWindow() {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+  // 任务栏点击统一为打开面板（与托盘一致）。
+  // 启动后 3 秒内的 focus 是初始化触发，忽略，避免一启动就弹面板。
+  let readyAt = Date.now();
+  mainWindow.on('focus', () => {
+    if (Date.now() - readyAt < 3000) return;
+    if (!panelWindow || panelWindow.isDestroyed()) createPanelWindow();
+  });
 }
 
 // ── 桌宠面板：皮肤/主题/连接状态/日志/对话/设置 ──
