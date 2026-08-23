@@ -88,11 +88,7 @@ function setIdleStage(stage) {
   if (stage === 'stand') {
     statusLabel.textContent = STATES.idle.label;
     setStateImg(`${ASSET_PREFIX}/${SKIN_FILES.idle || FALLBACK_FILES.idle}`);
-    idleStageTimer = setTimeout(() => setIdleStage('prep'), IDLE_STAGE_MS.stand);
-  } else if (stage === 'prep') {
-    statusLabel.textContent = '准备睡觉…';
-    setStateImg(`${ASSET_PREFIX}/sleeping.gif`);
-    idleStageTimer = setTimeout(() => setIdleStage('sleep'), IDLE_STAGE_MS.prep);
+    idleStageTimer = setTimeout(() => setIdleStage('sleep'), IDLE_STAGE_MS.stand);
   } else if (stage === 'sleep') {
     statusLabel.textContent = '睡着啦💤';
     setStateImg(`${ASSET_PREFIX}/${SLEEP_IMG}`);
