@@ -22,8 +22,8 @@ html, body {
 
 #container {
   position: relative;
-  width: 200px;
-  height: 260px;
+  width: 300px;
+  height: 169px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -145,11 +145,9 @@ html, body {
 
 /* 宠物主体 */
 .wrapper {
-  width: 180px;
-  height: 180px;
-  margin-top: 34px;
-  border-radius: 50%;
-  overflow: hidden;
+  width: 300px;
+  height: 169px;
+  overflow: visible;
   cursor: grab;
   -webkit-app-region: no-drag;
   animation: none;
@@ -162,7 +160,7 @@ html, body {
 #pet-img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   pointer-events: none;
 }
 
@@ -237,10 +235,13 @@ html, body {
 
 /* 状态徽章 */
 .badge {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-top: 6px;
   padding: 3px 10px;
   background: var(--badge-bg);
   color: #fff;
@@ -265,41 +266,4 @@ html, body {
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.4; }
-}
-
-/* 控制按钮 */
-.controls {
-  position: absolute;
-  bottom: 2px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: none;
-  gap: 4px;
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: 12px;
-  padding: 5px;
-  box-shadow: 0 4px 16px rgba(31, 103, 177, 0.15);
-  z-index: 20;
-}
-
-#container:hover .controls {
-  display: flex;
-}
-
-.controls button {
-  border: none;
-  background: #dcecff;
-  border-radius: 8px;
-  padding: 5px 8px;
-  font-size: 10px;
-  color: #174f8c;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.2s;
-  font-weight: 600;
-}
-
-.controls button:hover {
-  background: #2f7dd1;
-  color: #fff;
-  transform: translateY(-1px);
 }

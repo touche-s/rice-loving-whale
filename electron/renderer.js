@@ -335,13 +335,6 @@ window.addEventListener('mouseup', (e) => {
   window.petAPI.dragEnd();
 });
 
-// 控制按钮
-document.querySelectorAll('.controls button').forEach((btn) => {
-  btn.addEventListener('click', () => {
-    setState(btn.dataset.state);
-  });
-});
-
 // 主进程事件：手动切状态 / 自动循环
 window.petAPI.onStateChanged((state) => setState(state));
 window.petAPI.onCycleToggled(() => toggleAutoCycle());
