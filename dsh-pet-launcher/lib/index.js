@@ -62,9 +62,9 @@ function apply(ctx) {
       return;
     }
     try {
-      // detached: 让桌宠独立于 DSH 进程树，DSH 异常退出也不连带（但 dispose 时显式关闭）
-      child = spawn(pet.cmd, pet.args, { cwd: pet.cwd, detached: true, stdio: 'ignore' });
-      child.unref();
+      // 桌宠在 DSH 进程树内（不 detached）：DSH 退出时自然连带关闭，
+      // dispose 的 taskkill 再兜底确保清理。
+      child = spawn(pet.cmd, pet.args, { cwd: pet.cwd, stdio: 'ignore' });
       spawned = true;
       ctx.logger.info('[pet-launcher] 已启动桌宠: ' + pet.cmd);
     } catch (e) {
