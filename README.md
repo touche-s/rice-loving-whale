@@ -15,7 +15,7 @@
   - `working` 干活 → 敲代码
   - `completed` 完成 → 吃大白米饭 🍚
   - `error` 报错 → 惊慌抱头
-  - `idle` 待机 → 站立 → 准备睡觉 → 趴睡（渐进入睡）
+  - `idle` 待机 → 站立 → 趴睡（一直待机渐进入睡）
 - **💬 心声气泡**：AI 正在思考/输出的文字实时显示在鲸鱼娘头顶（text-delta 流）
 - **⚠️ 审批提醒**：AI 请求执行敏感操作时，鲸鱼娘举起手弹醒目提示（红色警告条）
 - **❓ 提问提醒**：AI 想问你问题时，鲸鱼娘蹦出来提醒你回话（蓝色提示条）
@@ -80,14 +80,13 @@ npm start
 1. 先启动 DeepSeek Harness Web（默认 `http://127.0.0.1:3080`）
 2. 启动桌宠，托盘出现鲸鱼娘图标，窗口底部状态徽章变绿 = 已连接
 3. 在 DSH 网页发起对话/工具调用，鲸鱼娘会跟随 AI 状态切换动画
-
 ### 交互
 
 | 操作 | 效果 |
 |---|---|
-| 单击 | 摸头（喂饭在面板 → 宠物页 🍚） |
+| 单击鲸鱼娘 | 摸头（喂饭在面板 → 宠物页 🍚） |
 | 拖拽 | 移动窗口 |
-| 托盘左键 | 打开面板 |
+| 任务栏点击 / 托盘左键 | 打开面板 |
 | 托盘右键 | 显示/隐藏、切状态、打开面板、自启、退出 |
 
 ## ⚙️ 配置
@@ -136,6 +135,8 @@ curl -X POST http://127.0.0.1:8765/state -H "content-type: application/json" \
 }
 ```
 
+> 更多工具的接入示例（Codex / Cline / Cursor / Windsurf 等）与跨平台通知脚本 `hook-notify.js` 见 [`hooks-examples/`](./hooks-examples/README.md)。
+
 ## 🔌 独立运行状态桥（开发/调试）
 
 项目根提供独立模式，验证 DSH 事件流链路：
@@ -163,7 +164,7 @@ DSH (dsh web) ──ws──▶ ws-client.js（手写 RFC6455，免 Origin）─
 ## ❓ 常见问题
 
 **Q：桌宠窗口没出现？**
-A：窗口是透明无边框且不占任务栏，可能在屏幕右下角或托盘附近；确认 DSH 已启动、托盘图标存在（右键可"显示鲸鱼娘"）。
+A：窗口是透明无边框，显示在屏幕右下角；确认 DSH 已启动、托盘图标存在（右键可"显示鲸鱼娘"）。
 
 **Q：状态徽章一直是灰色/无边框？**
 A：未连上 DSH。检查：DSH Web 是否在跑、设置里的地址是否正确、端口是否被占用。
@@ -194,6 +195,7 @@ npm run build-installer  # 打包安装版
 ├── dsh-plugin/               # DSH client 插件（网页内桌宠，生态原生）
 │   ├── package.json          # dsh.client 声明 + ./client exports
 │   └── lib/client.js         # 单文件 bundle：状态机 + 浮层 UI
+├── dsh-pet-launcher/         # DSH 宿主插件：让桌宠跟随 DSH 启动/退出
 ├── electron/
 │   ├── main.js               # 主进程：窗口/托盘/桥/对话/用量
 │   ├── ws-client.js          # 零依赖 WebSocket 客户端（RFC 6455）
@@ -201,11 +203,12 @@ npm run build-installer  # 打包安装版
 │   ├── config.js             # 配置读写
 │   ├── credentials.js        # API Key 加密存储（Windows DPAPI）
 │   ├── usage.js              # 余额查询 + 用量/费用统计（usage.json）
-│   ├── renderer.js           # 渲染进程：动画/互动/心声气泡/待机三阶段
-│   ├── panel.html/js         # 控制面板（宠物/养成/皮肤/主题/用量/对话/设置/日志）
+│   ├── presets.js            # 素材预设（多套状态图方案可切换/自定义图）
+│   ├── renderer.js           # 渲染进程：动画/互动/心声气泡/待机入睡
+│   ├── panel.html/js         # 控制面板（宠物/养成/素材/主题/用量/对话/设置/日志）
 │   ├── nurture.js            # 养成系统
 │   ├── hooks-server.js       # 通用 Hooks 状态端点
-│   └── assets/               # 立绘动图（idle/thinking/coding/success/error/sleep + 图标）
+│   └── assets/               # 16:9 立绘动图（idle/thinking/coding/success/error/sleep + 图标/头像）
 ├── extension/                # （可选）VS Code 扩展雏形
 └── config.example.json       # 配置模板（不含敏感信息）
 ```
