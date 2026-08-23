@@ -445,7 +445,7 @@ function appendMsg(role, text) {
     avatar.textContent = '🙂';
   } else {
     const im = document.createElement('img');
-    im.src = './assets/icon-512.png';
+    im.src = './assets/whale-avatar.png';
     im.alt = '鲸鱼娘';
     avatar.appendChild(im);
   }
