@@ -1,69 +1,61 @@
-# 🐳 蓝色女仆鲸鱼娘桌宠
+# 🐳 鲸鱼娘桌宠
 
-一个实时感知 **DeepSeek Harness（DSH）** AI 状态的桌面宠物。当你让 AI 干活时，她会跟随 AI 的状态变化：思考 → 歪头推理，干活 → 敲代码，完成 → 吃大白米饭，报错 → 惊慌抱头，还会把 AI 正在思考的文字实时显示在气泡里，完成时汇报本轮消耗。
+> 一只**蓝色女仆 Q 版鲸鱼娘**，住在你的电脑桌面上，实时感知 **DeepSeek Harness（DSH）** 的 AI 状态，陪你干活、撒娇、长大。
 
-![待机](./electron/assets/idle.gif) ![思考](./electron/assets/thinking.gif) ![写代码](./electron/assets/coding.gif) ![完成](./electron/assets/success.gif) ![报错](./electron/assets/error.gif)
+她会在你让 AI 干活时跟着变：**思考 → 歪头推理，干活 → 敲代码，完成 → 吃大白米饭 🍚，报错 → 惊慌抱头**，还能跟你聊天、攒养成、查用量。
 
-> 角色设定：蓝色女仆装的 Q 版鲸鱼娘，会在云朵上打盹、歪头思考、噼里啪啦写代码、吃大白米饭、傲娇撒娇。
+![鲸鱼娘图标](./electron/assets/icon-512.png)
+
+## 🎬 她的日常（每个状态都是动态 GIF）
+
+| 待机 · 呼吸眨眼 | 思考 · 歪头推理 | 干活 · 敲代码 |
+|---|---|---|
+| ![待机](./electron/assets/idle.gif) | ![思考](./electron/assets/thinking.gif) | ![干活](./electron/assets/coding.gif) |
+
+| 完成 · 吃大白米饭 | 报错 · 惊慌抱头 | 趴睡 · 睡着啦 |
+|---|---|---|
+| ![完成](./electron/assets/success.gif) | ![报错](./electron/assets/error.gif) | ![趴睡](./electron/assets/sleep.gif) |
+
+### 💖 互动表情（单击 / 面板按钮触发）
+
+| 摸头 · 害羞 | 开心 · 蹦跳 | 生气 · 鼓腮 |
+|---|---|---|
+| ![摸头](./electron/assets/pat.gif) | ![开心](./electron/assets/happy.gif) | ![生气](./electron/assets/angry.gif) |
+
+> 角色设定：蓝色女仆装 Q 版鲸鱼娘，蓝发、白围裙、蝴蝶结、头顶呆毛、身后有鲸鱼尾巴。傲娇又粘人，爱吃大白米饭。
 
 ---
 
-## ✨ 功能
+## ✨ 功能亮点
 
-- **AI 状态实时驱动**：监听 DSH 原生事件流（mux 细粒度 + host 兜底双流），自动切换 5 种状态动画
-  - `thinking` 思考 → 歪头推理
-  - `working` 干活 → 敲代码
-  - `completed` 完成 → 吃大白米饭 🍚
-  - `error` 报错 → 惊慌抱头
-  - `idle` 待机 → 站立 → 趴睡（一直待机渐进入睡）
-- **💬 心声气泡**：AI 正在思考/输出的文字实时显示在鲸鱼娘头顶（text-delta 流）
-- **⚠️ 审批提醒**：AI 请求执行敏感操作时，鲸鱼娘举起手弹醒目提示（红色警告条）
-- **❓ 提问提醒**：AI 想问你问题时，鲸鱼娘蹦出来提醒你回话（蓝色提示条）
-- **🐳 和鲸鱼娘聊天**：傲娇的鲸鱼娘陪你唠嗑（deepseek-chat），可在宠物页 ✏️ 起名字
-- **🔔 完成通知**：AI 完成一轮工作时，系统通知"搞定啦"，并弹气泡汇报本轮 token 与费用
-- **💰 余额与用量**：填 DeepSeek API Key 后在面板查看账户余额、本轮/累计 Token 与估算费用、每轮结算历史
+- **🤖 实时感知 AI 状态**：监听 DSH 原生事件流，AI 思考/干活/完成/报错，她全程跟随
+- **💬 心声气泡**：AI 正在输出的文字实时显示在她头顶，像在悄悄念叨
+- **🐳 和鲸鱼娘聊天**：傲娇的她陪你唠嗑（deepseek-chat），可在宠物页给她起名字
+- **💰 余额与用量**：填 DeepSeek API Key 后，面板查看余额、本轮/累计 token 与费用，完成时汇报消耗
 - **🌱 养成系统**：喂食/摸头提升饱腹与好感，陪 AI 干活积累成长，从鲸鱼宝宝长成鲸鱼娘
-- **互动**：单击摸头、拖拽移动（喂饭在面板宠物页）
-- **托盘菜单**：显示/隐藏、手动切状态、打开面板、开机自启、退出
-- **DSH 地址可配置**：支持非本机/非默认端口的 DSH 部署
-- **断线重连**：指数退避自动重连，坏帧跳过不崩溃
-- **跟随 DSH 启动/退出**：安装 `dsh-pet-launcher` 插件后，启动 `dsh web` 自动拉起桌宠，退出 DSH 自动关闭桌宠
-- **零运行时依赖**：状态桥只用 Node 内置能力（fetch/WebSocket/TextDecoder），手写 RFC 6455 客户端
+- **💖 互动表情**：摸头害羞、开心蹦跳、生气鼓腮，单击或面板按钮触发
+- **😴 待机入睡**：一直待机她会慢慢趴睡（站立 → 趴睡）
+- **⚠️ 审批/提问提醒**：AI 请求操作或提问时，她举手提醒你
+- **🎨 素材预设**：可保存多套状态图方案，每个状态自定义换图
+- **🔄 跟随 DSH 启动/退出**：DSH 启动自动拉起，退出自动关闭
+- **🔌 通用 Hooks**：Claude Code / Codex / Cline 等任意工具都能推送状态驱动她
+- **✨ 零依赖**：状态桥只用 Node 内置能力，透明无边框悬浮桌面
 
-## 📦 安装
+---
 
-### 方式零：DSH 插件（生态原生）⭐
+## 🚀 快速上手（30 秒开始用）
 
-`dsh-plugin/` 是一个 **DSH client 插件**（网页内桌宠）：在 DSH Web UI 右下角浮动鲸鱼娘，随 Agent 状态切换表情 + 心声气泡 + 审批/提问提醒。
+### 方式一：下载 exe（推荐，开箱即用）
 
-```bash
-# 发布后：
-dsh plugin add dsh-maid-whale-pet --profile web
-# 本地开发测试：
-install-plugin.bat   # 或手动复制 dsh-plugin → ~/.dsh/profiles/web 并 pnpm add
-```
+从 [Releases](https://github.com/touche-s/rice-loving-whale/releases) 下载，**无需安装任何环境**：
 
-**让桌宠跟随 DSH 启动/退出**（`dsh-pet-launcher/` 插件）：安装后启动 `dsh web` 自动拉起桌面桌宠，退出 DSH 自动关闭桌宠。
+- `鲸鱼娘桌宠 Setup x.x.x.exe` — 安装版（创建桌面快捷方式，可设开机自启）
+- `鲸鱼娘桌宠 x.x.x.exe` — 便携版（单文件，双击即用）
 
-> 详细安装、配置、原理与常见问题见 [`dsh-pet-launcher/README.md`](./dsh-pet-launcher/README.md)。
-
-```bash
-# 快速安装（详见插件 README）
-node dsh-pet-launcher/install-launcher.js "<桌宠exe路径或electron源码目录>"
-cd ~/.dsh/profiles/web && corepack pnpm install
-dsh web   # 重启 dsh web 生效
-```
-
-桌宠路径通过环境变量 `DSH_PET_PATH` 或 `~/.dsh/profiles/web/.pet-launcher-path` 指定（指向桌宠 exe 或 electron 源码目录）。
-
-### 方式一：直接下载（推荐，开箱即用）
-
-从 [Releases](https://github.com/touche-s/rice-loving-whale/releases) 下载 exe，**无需安装 Node / 依赖**：
-
-- `鲸鱼娘桌宠 Setup x.x.x.exe` — 安装版（自动创建桌面快捷方式，可设置开机自启）
-- `鲸鱼娘桌宠 x.x.x.exe` — 便携版（解压即用，单文件）
-
-> Release 由 GitHub Actions 自动构建。首次运行自动初始化配置，配好 DeepSeek API Key（面板 → 设置）即可聊天、查余额。
+**三步开始**：
+1. 运行桌宠（或用 `dsh-pet-launcher` 让它跟随 DSH 自动启动）
+2. 右键托盘 → 打开面板 → 设置里填 **DeepSeek API Key**（可选，填了才能聊天/查余额）
+3. 在 DSH 里让 AI 干活，鲸鱼娘就会活起来！
 
 ### 方式二：源码运行
 
@@ -88,6 +80,19 @@ npm start
 | 拖拽 | 移动窗口 |
 | 任务栏点击 / 托盘左键 | 打开面板 |
 | 托盘右键 | 显示/隐藏、切状态、打开面板、自启、退出 |
+
+## 🖥 控制面板（鲸鱼娘的"家"）
+
+右键托盘 → 打开面板，左侧是功能导航：
+
+| 页面 | 功能 |
+|---|---|
+| 🐳 宠物 | 查看当前状态，改名字，喂饭/摸头/互动表情 |
+| 🌱 养成 | 饱腹/好感/成长进度，从鲸鱼宝宝长成鲸鱼娘 |
+| 🎨 素材预设 | 保存多套状态图方案，每个状态自定义换图 |
+| 💬 对话 | 和傲娇的鲸鱼娘聊天（deepseek-chat） |
+| 💰 用量 | 余额、本轮/累计 token 与费用、每轮结算历史 |
+| ⚙️ 设置 | 状态源、DSH 地址、API Key、开机自启 |
 
 ## ⚙️ 配置
 
