@@ -220,7 +220,7 @@ npm run build-installer  # 打包安装版
 
 ## 🙏 致谢
 
-- 角色形象为原创 Q 版女仆鲸鱼娘
+- 角色形象参考社区deepseek大肥鱼形象
 - 参考开源生态：[vscode-pets](https://github.com/tonybaloney/vscode-pets)、[duzexu/desktop-pet](https://github.com/duzexu/desktop-pet)、[dsh-dafeiyu](https://github.com/QCYTSN/dsh-dafeiyu)
 
 ## 📄 License
